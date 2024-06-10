@@ -1,0 +1,165 @@
+{
+    "author_id": 1201923723662467082,
+    "dungeon_list": [
+        {
+            "id": 8,
+            "name": "Neewe Caves",
+            "min_level": null
+        },
+        {
+            "id": 9,
+            "name": "Daragorn's Lair", 
+            "min_level": null
+        },
+        {
+            "id": 10,
+            "name": "Enchanted Forest",
+            "min_level": null
+        },
+        {
+            "id": 12,
+            "name": "Spider Nest",
+            "min_level": null
+        },
+        {
+            "id": 13,
+            "name": "Sawmill",
+            "min_level": null
+        },
+        {
+            "id": 14,
+            "name": "Magma Caves",
+            "min_level": null
+        },
+        {
+            "id": 15,
+            "name": "FireBreath's Lair",
+            "min_level": null
+        },
+        {
+            "id": 16,
+            "name": "Asterion's Labyrinth",
+            "min_level": null
+        },
+        {
+            "id": 17,
+            "name": "Dragonblood",
+            "min_level": null
+        },
+        {
+            "id": 18,
+            "name": "Sir Valkan's Stronghold",
+            "min_level": null
+        },
+        {
+            "id": 20,
+            "name": "Ravanor's Land",
+            "min_level": null
+        },
+        {
+            "id": 22,
+            "name": "Danma Caverns",
+            "min_level": null
+        },
+        {
+            "id": 23,
+            "name": "Viasar Castle",
+            "min_level": null
+        },
+        {
+            "id": 24,
+            "name": "Fairy Forest",
+            "min_level": null
+        },
+        {
+            "id": 25,
+            "name": "Kron Waterfalls",
+            "min_level": null
+        },
+        {
+            "id": 27,
+            "name": "Dark Cave",
+            "min_level": null
+        },
+        {
+            "id": 28,
+            "name": "Underwater magma caves",
+            "min_level": null
+        },
+        {
+            "id": 31,
+            "name": "Stahmite Mines",
+            "min_level": null
+        },
+        {
+            "id": 32,
+            "name": "The path of the warrior",
+            "min_level": null
+        },
+        {
+            "id": 33,
+            "name": "Feeble's Deathtrap",
+            "min_level": null
+        },
+        {
+            "id": 35,
+            "name": "DanCie Spikes",
+            "min_level": null
+        },
+        {
+            "id": 36,
+            "name": "Scale Caves",
+            "min_level": null
+        },
+        {
+            "id": 41,
+            "name": "Sky's Prison",
+            "min_level": null
+        },
+        {
+            "id": 45,
+            "name": "Tower Lair",
+            "min_level": null
+        },
+        {
+            "id": 46,
+            "name": "Bloodmoon Castle",
+            "min_level": null
+        },
+        {
+            "id": 48,
+            "name": "Ruins of Kalambria",
+            "min_level": null
+        },
+        {
+            "id": 50,
+            "name": "AzureFlora Abyss",
+            "min_level": null
+        },
+        {
+            "id": 51,
+            "name": "Toxic Caves",
+            "min_level": null
+        },
+        {
+            "id": 52,
+            "name": "Cloudy Sky",
+            "min_level": null
+        },
+        {
+            "id": 53,
+            "name": "Cave Under Water",
+            "min_level": null
+        },
+        {
+            "id": 54,
+            "name": "Cursed Cave",
+            "min_level": null
+        },
+        {
+            "id": 57,
+            "name": "Frostbite Dungeon",
+            "min_level": null
+        }
+    ]
+}

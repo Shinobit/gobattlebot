@@ -1,0 +1,24 @@
+{
+  "name": "gobattlebot",
+  "version": "1.0.0",
+  "description": "I am a Bot capable of giving you useful information about the MMORPG GoBattle.io.",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shinobit/gobattlebot.git"
+  },
+  "keywords": [],
+  "author": "Shinobit LLC, Kuwazy (Samuel Marzin), and contributors",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Shinobit/gobattlebot/issues"
+  },
+  "homepage": "https://github.com/Shinobit/gobattlebot#readme",
+  "dependencies": {
+    "canvas": "^2.11.2",
+    "discord.js": "^14.14.1"
+  }
+}
