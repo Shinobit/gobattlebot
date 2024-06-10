@@ -14,16 +14,16 @@ Assume you are on a Linux environment:
 `sudo apt install -y nodejs`
 
 2. Check the installation:
-`node -v`
-`npm -v`
+> `node -v`
+> `npm -v`
 /!\ Note that the minimum node js version for the project must be v20. /!\
 
 2. Install dependencies:
-`npm install`
+> `npm install`
 (If there is a problem compiling the dependencies, use the `npm rebuild` command)
 
 3. Start the bot.
-`node --env-file=.env ./src/index.js`
+> `node --env-file=.env ./src/index.js`
 
 If you want to start the project from docker:
 
