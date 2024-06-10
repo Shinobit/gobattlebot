@@ -11,7 +11,7 @@ To start the project, open the terminal in the project root and use the followin
 Assume you are on a Linux environment:
 
 1. Install nodejs:
-`sudo apt install -y nodejs`
+> `sudo apt install -y nodejs`
 
 2. Check the installation:
 > `node -v`
