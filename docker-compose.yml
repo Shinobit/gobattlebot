@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  bot:
+    build: .
+    container_name: gobattleio_bot
+    env_file: 
+      - .env
+    volumes:
+      - .:/app
+    command: ["node", "--env-file=.env", "./src/index.js"]
+    restart: unless-stopped
