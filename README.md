@@ -38,3 +38,6 @@ Suppose you already have Docker installed on your system:
 
 3. Start container:
   `docker-compose up`
+
+Brutal method to stop all containers:
+`docker-compose down`
