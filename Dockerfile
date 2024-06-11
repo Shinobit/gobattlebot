@@ -16,10 +16,10 @@ RUN apt-get update && apt-get install -y \
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install --build-from-source
 
 COPY . .
 
-RUN npm rebuild canvas
+RUN npm rebuild canvas --build-from-source
 
 CMD ["node", "--env-file=.env", "./src/index.js"]
