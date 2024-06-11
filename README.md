@@ -5,6 +5,11 @@ The port is open to all potential contributors and is now managed by Shinobit.
 
 -----------------
 
+## Configuration and prerequisites
+- You must have a Discord app that you have previously created in the Discord Developer Portal.
+- You also need to have nodejs v20 or higher installed on your server.
+- You must have the application token and configure the `.env` file accordingly.
+
 ## To start the project, open a terminal at the root of the project and use the following commands:
 (Make sure you have set the environment variables correctly in the `.env` file.)
 
