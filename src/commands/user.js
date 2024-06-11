@@ -149,7 +149,6 @@ async function get_info(interaction, client){
         embed.setFooter({text: "Last connection"});
         embed.setTimestamp();
 
-        console.log(__filename, __dirname);
         const attachment = new AttachmentBuilder(__dirname + "/../images/mr_strong_head.png");
         attachment.name = "head.png";
 

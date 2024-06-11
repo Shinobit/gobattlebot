@@ -1,5 +1,6 @@
-const {SlashCommandBuilder, AttachmentBuilder} = require("discord.js");
+const {SlashCommandBuilder, AttachmentBuilder, EmbedBuilder} = require("discord.js");
 const zlib = require("zlib");
+const {restrict_text} = require("../utils.js");
 
 const asset_command = new SlashCommandBuilder();
 asset_command.setName("asset");
@@ -114,8 +115,21 @@ async function get_info(interaction, client){
         const attachment = new AttachmentBuilder(is_compressed ? zlib.inflateSync(file_buffer) : file_buffer);
         attachment.name = is_compressed ? file_data.file.slice(0, -1) : file_data.file;
 
+        const embed = new EmbedBuilder();
+        embed.setTitle(restrict_text(`GoBattle.io Asset __\"${attachment.name}\"__.`, 60));
+        embed.setColor(0x500000);
+        
+        embed.addFields(
+            {name: "> 🏷️ __ID__", value: `> ${file_id}`, inline: true},
+            {name: "> 🔗 __Source__", value: `> [click here](${url.href})`, inline: true},
+            {name: "> 🗜️ __Compressed__", value: `> ${is_compressed ? "zlib": "_No_"}`, inline: true},
+        );
+
+        embed.setFooter({text: "© SHINOBIT LLC"});
+        embed.setTimestamp();
+
         await interaction.editReply({
-            content: `# GoBattle.io Asset __\"${attachment.name}\"__.\nID: ${file_id}\nSource: [click here](${url.href})\nCompressed source: ${is_compressed ? "zlib": "_No_"}\n© SHINOBIT LLC.`,
+            embeds: [embed],
             files: [attachment]
         });
     }catch(error){
