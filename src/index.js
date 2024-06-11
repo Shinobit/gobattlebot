@@ -165,19 +165,20 @@ client.on("messageCreate", async (msg) => {
         // Quick commands for development.
         switch (command){
             case "!gb_bot_guilds":
-                if (msg.author == client.application.owner){
-                    const guilds = client.guilds.cache;
-                    let message = "# List of guilds I am in:\n\n";
-                    let i = 0;
-                    for (const guild of guilds.values()){
-                        i++;
-                        message += `**#${i}** ${guild.name}: \`${guild.id}\`,\n`;
-                    }
-                    message += `(${guilds.size} Guilds)`;
-                    await msg.reply(message);
-                }else{
+                if (msg.author != client.application.owner){
                     await msg.reply(`You are not ${client.application.owner}, you do not have the right to use this command.`);
+                    return;
                 }
+
+                const guilds = client.guilds.cache;
+                let message = "# List of guilds I am in:\n\n";
+                let i = 0;
+                for (const guild of guilds.values()){
+                    i++;
+                    message += `**#${i}** ${guild.name}: \`${guild.id}\`,\n`;
+                }
+                message += `(${guilds.size} Guilds)`;
+                await msg.reply(message);
                 
                 break;
         }
