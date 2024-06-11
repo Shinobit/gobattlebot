@@ -1,7 +1,7 @@
 # GoBattle.io Discord Bot
 
 This Discord bot is a community project initiated by __Kuwazy#703__ and provides Discord users with utility commands related to the MMORPG [GoBattle.io](https://gobattle.io/).
-The port is open to all potential contributors and is now managed by Shinobit.
+The door is open to all potential contributors. The project is now managed by Shinobit.
 
 -----------------
 
