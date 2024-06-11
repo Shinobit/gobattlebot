@@ -18,7 +18,7 @@ Assume you are on a Linux environment:
   `npm -v`
   /!\ Note that the minimum node js version for the project must be v20. /!\
 
-4. Install dependencies:
+3. Install dependencies:
   `npm install`
   (If there is a problem compiling the dependencies, use the `npm rebuild` command)
   If there are problems with installing the `canvas` dependency please follow the procedure for installing this dependency here: https://www.npmjs.com/package/canvas.
@@ -30,8 +30,11 @@ Assume you are on a Linux environment:
 
 Suppose you already have Docker installed on your system:
 
-1. Build the Docker image:
+1. Install dependencies:
+  `npm install`
+ 
+2. Build the Docker image:
   `docker-compose build`
 
-2. Start container:
+3. Start container:
   `docker-compose up`
