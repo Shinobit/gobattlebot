@@ -69,7 +69,7 @@ async function get_info(interaction, client){
             return;
         }
 
-        const attachment = new AttachmentBuilder("./images/unknown_item.png");
+        const attachment = new AttachmentBuilder("../images/unknown_item.png");
         attachment.name = "item_icon.png";
 
         const embed = new EmbedBuilder()
