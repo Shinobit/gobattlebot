@@ -6,7 +6,7 @@ The port is open to all potential contributors and is now managed by Shinobit.
 -----------------
 
 ## To start the project, open a terminal at the root of the project and use the following commands:
-(Make sure you have set the environment variables correctly in the .env file.)
+(Make sure you have set the environment variables correctly in the `.env` file.)
 
 Assume you are on a Linux environment:
 
