@@ -69,7 +69,7 @@ async function get_info(interaction, client){
             return;
         }
 
-        const attachment = new AttachmentBuilder("../images/unknown_item.png");
+        const attachment = new AttachmentBuilder(__dirname + "/../images/unknown_item.png");
         attachment.name = "item_icon.png";
 
         const embed = new EmbedBuilder()
@@ -77,7 +77,6 @@ async function get_info(interaction, client){
         embed.setThumbnail(`attachment://${attachment.name}`);
         embed.setDescription(item_info.description ? restrict_text(item_info.description, 250) : "_Description Unknown_");
         embed.setColor(0x500000);
-
         embed.addFields(
             {name: "> 🏷️ __ID__", value: `> ${item_id}`, inline: true},
             {name: "> 🌟 __Rarity__", value: `> ***${"Ultrarare"}***`, inline: true},
