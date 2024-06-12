@@ -121,8 +121,8 @@ async function get_info(interaction, client){
         
         embed.addFields(
             {name: "> 🏷️ __ID__", value: `> ${file_id}`, inline: true},
-            {name: "> 🔗 __Source__", value: `> [click here](${url.href})`, inline: true},
-            {name: "> 🗜️ __Compressed__", value: `> ${is_compressed ? "zlib": "_No_"}`, inline: true},
+            {name: "> 🔗 __Source__", value: `> [Click here](${url.href})`, inline: true},
+            {name: "> 🗜️ __Compressed__", value: `> ${is_compressed ? "zlib": "_No_"}`, inline: true}
         );
 
         embed.setFooter({text: "© SHINOBIT LLC"});
