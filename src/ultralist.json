@@ -390,6 +390,36 @@
             "uses": null,
             "is_relic": null,
             "max_in_inventory": null
+        },
+        {
+            "name": "Dwarf's Strength",
+            "tickets": null,
+            "drops": null,
+            "id": 187,
+            "description": "Increases reach of Axes 8%",
+            "uses": null,
+            "is_relic": true,
+            "max_in_inventory": 16
+        },
+        {
+            "name": "Talisman of the Phoenix",
+            "tickets": null,
+            "drops": null,
+            "id": 161,
+            "description": null,
+            "uses": null,
+            "is_relic": true,
+            "max_in_inventory": null
+        },
+        {
+            "name": "Flying Skill",
+            "tickets": null,
+            "drops": null,
+            "id": null,
+            "description": "Gives you the skill to dash vertically with your wings",
+            "uses": null,
+            "is_relic": true,
+            "max_in_inventory": 1
         }
     ]
 }
