@@ -32,8 +32,6 @@ npm -v
 ```bash
 npm install
 ```
-  (If there is a problem compiling the dependencies, use the `npm rebuild` command)
-  If there are problems with installing the `canvas` dependency please follow the procedure for installing this dependency here: https://www.npmjs.com/package/canvas.
 
 4. Start the bot.
 ```bash
