@@ -1,5 +1,5 @@
-const {SlashCommandBuilder, EmbedBuilder, AttachmentBuilder} = require("discord.js");
-const {restrict_text, table} = require("../utils.js");
+const {SlashCommandBuilder, EmbedBuilder} = require("discord.js");
+const {restrict_text} = require("../utils.js");
 
 const server_command = new SlashCommandBuilder();
 server_command.setName("server");
@@ -81,7 +81,7 @@ async function get_list(interaction, client){
 
         embed.setTitle("🖥️ Server List 🖥️");
 
-        const table_data = [["ID", "NAME", "VERSION", "ADMIN", "STATUS"]];
+        let description = "";
         const list_size = server_list.length;
         for (var i = 0; i < max_fields && i < list_size; i++){
             const field = server_list[i];
@@ -97,24 +97,27 @@ async function get_list(interaction, client){
                 is_online = false;
             }
 
-            table_data.push([field?.id, restrict_text(field?.friendlyName, 20), field?.version, field?.admin, (is_online ? "Online" : "Down")]);
+            description += `* ${restrict_text(field?.friendlyName, 25)}: \`${field?.id} 🏷️\` \`${field?.version} 🔁\` \`${field?.admin} 🛠️\` \`${(is_online ? "Online" : "Down")} 🌐\`\n`;
         }
 
-        const attachment = new AttachmentBuilder(table(table_data));
-        attachment.name = "table.png";
-
-        embed.setImage(`attachment://${attachment.name}`);
+        embed.setDescription(description, {split: false});
 
         embed.addFields(
             {name: "> 🎮 __Platform__", value: `> ${platform}`, inline: true},
             {name: "> 🔃 __Requested version__", value: `> ${version.toString()}`, inline: true}
         );
 
+        embed.addFields(
+            {name: "> __Server ID__", value: "> 🏷️", inline: true},
+            {name: "> __Version__", value: "> 🔁", inline: true},
+            {name: "> __Administrator level__", value: "> 🛠️", inline: true},
+            {name: "> __Server status__", value: "> 🌐", inline: true}
+        );
+
         embed.setTimestamp();
 
         await interaction.editReply({
-            embeds: [embed],
-            files: [attachment]
+            embeds: [embed]
         });
     }catch(error){
         await interaction.editReply(`Unable to retrieve server list.\nContact ${client.application.owner} to resolve this issue.`);

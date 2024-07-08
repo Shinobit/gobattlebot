@@ -1,6 +1,5 @@
 const {Client, Partials, IntentsBitField, Routes, ActivityType} = require("discord.js");
-const {get_random_int, get_first_chat_channel} = require("./utils.js");
-const sentences = require("./sentences.json");
+const {get_first_chat_channel} = require("./utils.js");
 
 const {get_ranking, ranking_command} = require("./commands/ranking.js");
 const {get_help, help_command} = require("./commands/help.js");
@@ -154,12 +153,6 @@ client.on("messageCreate", async (msg) => {
     }
 
     try{
-        // Adding chili pepper to the cat. It amuses us LOL.
-        if (msg.mentions.has(client.user)){
-            await msg.reply(sentences[get_random_int(sentences.length)]);
-            return;
-        }
-
         const command = msg.content.trim().toLowerCase();
 
         // Quick commands for development.

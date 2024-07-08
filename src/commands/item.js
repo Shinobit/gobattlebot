@@ -1,6 +1,6 @@
 const {SlashCommandBuilder, EmbedBuilder, AttachmentBuilder} = require("discord.js");
 const {ultra_list} = require("../ultralist.json");
-const {restrict_text, table, sum, format_score} = require("../utils.js");
+const {restrict_text, sum, format_score} = require("../utils.js");
 
 const item_command = new SlashCommandBuilder();
 item_command.setName("item");
@@ -132,15 +132,7 @@ async function get_ultrarare_drops(interaction, client){
         const embed = new EmbedBuilder();
         embed.setTitle("Current average chance of getting an Ultrarare from a chest.");
 
-        const description = `Results are calculated based on ${total} samples (chest opened by players) including ${total_ultrarare} ultrarare drops.`;
-        embed.setDescription(description, {split: false});
-
-        embed.addFields(
-            {name: "> 🌟 __Ultrarare__", value: `> ${(drops_ratio * 100).toPrecision(2)}%`, inline: true},
-            {name: "> 📦 __Other__", value: `> ${((1 - drops_ratio) * 100).toPrecision(2)}%`, inline: true}
-        );
-
-        const table_data = [["ID", "NAME", "DROP RATE", "DROP"]];
+        let description = `Results are calculated based on ${total} samples (chest opened by players) including ${total_ultrarare} ultrarare drops.\n`;
         const drops_entries = Object.entries(drops);
         for (const [key, value] of drops_entries){
             let name_ultra;
@@ -150,19 +142,27 @@ async function get_ultrarare_drops(interaction, client){
                     break;
                 }
             }
-            table_data.push(["#" + key, name_ultra || "Unknow?", `${(value / total_ultrarare * 100).toPrecision(2)}%`, format_score(value)]);
+
+            description += `* ${restrict_text(name_ultra || "*Unknow?*", 45)}: \`${format_score(value)} (${(value / total_ultrarare * 100).toPrecision(2)}%) 📤\` \`${key} 🏷️\`\n`;
         }
 
-        const attachment = new AttachmentBuilder(table(table_data));
-        attachment.name = "table.png";
+        embed.setDescription(description, {split: false});
 
-        embed.setImage(`attachment://${attachment.name}`);
+        embed.addFields(
+            {name: "> 🌟 __Ultrarare__", value: `> ${(drops_ratio * 100).toPrecision(2)}%`, inline: true},
+            {name: "> 📦 __Other__", value: `> ${((1 - drops_ratio) * 100).toPrecision(2)}%`, inline: true}
+        );
+
+        embed.addFields(
+            {name: "> __Drops__", value: "> 📤", inline: true},
+            {name: "> __Item ID__", value: "> 🏷️", inline: true}
+        );
+
         embed.setTimestamp();
 
         await interaction.editReply({
             content: "Special mention to _Sage of the Ivy_ for providing some metadata on most of the game's ultrarares while waiting for the GoBattle API update!\nThanks to him!",
-            embeds: [embed], 
-            files: [attachment]
+            embeds: [embed]
         });
     }catch(error){
         await interaction.editReply(`Unable to generate template.\nContact ${client.application.owner} to resolve this issue.`);

@@ -1,5 +1,5 @@
-const {SlashCommandBuilder, EmbedBuilder, AttachmentBuilder} = require("discord.js");
-const {table} = require("../utils.js");
+const {SlashCommandBuilder, EmbedBuilder} = require("discord.js");
+const {restrict_text} = require("../utils.js");
 const {dungeon_list} = require("../dungeon_list.json");
 
 const dungeon_command = new SlashCommandBuilder();
@@ -50,29 +50,30 @@ async function get_list(interaction, client){
 
     const embed = new EmbedBuilder();
     embed.setTitle("🏰 Dungeon List 🏰");
-    const description = "Note that this list is not updated in real time like other lists. This is a pre-list awaiting the GoBattle.io API update.";
+
+    let description = "Note that this list is not updated in real time like other lists. This is a pre-list awaiting the GoBattle.io API update.\n";
+
+    embed.setDescription(description, {split: false});
+
+    for (const dungeon_data of dungeon_list){
+        description += `* ${restrict_text(dungeon_data.name || "*Unknow?*", 45)}: \`${dungeon_data.id} 🏷️\` \`${dungeon_data.min_level || "Unknow?"} 💪\`\n`;
+    }
+
+    embed.setDescription(description, {split: false});
 
     embed.addFields(
         {name: "> 🔢 __Number of dungeons__", value: `> ${dungeon_list.length}`, inline: true},
     );
 
-    embed.setDescription(description, {split: false});
+    embed.addFields(
+        {name: "> __Min level__", value: "> 💪", inline: true},
+        {name: "> __Dungeon ID__", value: "> 🏷️", inline: true}
+    );
 
-    const table_data = [["ID", "NAME", "LVL MIN"]];
-
-    for (const dungeon_data of dungeon_list){
-        table_data.push(["#" + dungeon_data.id, dungeon_data.name || "Unknow?", dungeon_data.min_level || "Unknow?"]);
-    }
-
-    const attachment = new AttachmentBuilder(table(table_data));
-    attachment.name = "table.png";
-
-    embed.setImage(`attachment://${attachment.name}`);
     embed.setTimestamp();
 
     await interaction.editReply({
         embeds: [embed], 
-        files: [attachment]
     });
 }
 

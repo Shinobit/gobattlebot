@@ -18,7 +18,6 @@
   },
   "homepage": "https://github.com/Shinobit/gobattlebot#readme",
   "dependencies": {
-    "canvas": "^2.11.2",
     "discord.js": "^14.14.1"
   }
 }

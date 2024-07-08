@@ -1,5 +1,5 @@
-const {EmbedBuilder, SlashCommandBuilder, AttachmentBuilder} = require("discord.js");
-const {restrict_text, table, get_level, get_level_adventurer, format_score, format_speed_run_time} = require("../utils.js");
+const {EmbedBuilder, SlashCommandBuilder} = require("discord.js");
+const {restrict_text, get_level, get_level_adventurer, format_score, format_speed_run_time} = require("../utils.js");
 
 const ranking_command = new SlashCommandBuilder();
 ranking_command.setName("ranking");
@@ -167,30 +167,29 @@ async function get_king(interaction, client){
 
         embed.setTitle("👑 King Ranking 👑");
 
-        const description = "You can earn reputation points by killing enemies, bosses, completing dungeons, and killing other players in the arena.\nThe new king of Valdoran will be chosen every Sunday at midnight (UTC Time) and will earn 150 diamonds, ascend the throne, wear the crown and can use the `/coin` command.";
+        let description = "You can earn reputation points by killing enemies, bosses, completing dungeons, and killing other players in the arena.\nThe new king of Valdoran will be chosen every Sunday at midnight (UTC Time) and will earn 150 diamonds, ascend the throne, wear the crown and can use the `/coin` command.\n";
+        const ranking = data?.ranking;
+        for (let i = 0; i < max_fields && i < ranking.length; i++){
+            const field = ranking[i];
+            description += `${i + 1}. ${restrict_text(field?.nick, 20)}: \`${format_score(field?.reputation)} 🔱\` \`${field?.id} 🏷️\`\n`;
+        }
+
         embed.setDescription(description, {split: false});
-        
+
 	    embed.addFields(
             {name: "> 🗓 __Week__", value: `> ${data?.week || "_Unknown?_"}`, inline: true},
             {name: "> 🗓 __Year__", value: `> ${data?.year || "_Unknown?_"}`, inline: true}
         );
-        
-        const table_data = [["IDX", "NICK", "REP", "ID"]];
-        const ranking = data?.ranking;
-        for (let i = 0; i < max_fields && i < ranking.length; i++){
-            const field = ranking[i];
-            table_data.push(["#" + (i + 1), restrict_text(field?.nick, 20), format_score(field?.reputation), field?.id]);
-        }
 
-        const attachment = new AttachmentBuilder(table(table_data));
-        attachment.name = "table.png";
+        embed.addFields(
+            {name: "> __Reputation__", value: "> 🔱", inline: true},
+            {name: "> __User ID__", value: "> 🏷️", inline: true}
+        );
 
-        embed.setImage(`attachment://${attachment.name}`);
         embed.setTimestamp();
 
         await interaction.editReply({
-            embeds: [embed], 
-            files: [attachment]
+            embeds: [embed]
         });
     }catch(error){
         await interaction.editReply(`Failed to generate King ranking...\nContact ${client.application.owner} to resolve this issue.`);
@@ -216,25 +215,29 @@ async function get_weekly(interaction, client){
         const embed = new EmbedBuilder();
 
         embed.setTitle("🔥 Weekly Ranking 🔥");
-
-        const table_data = [["IDX", "NICK", "COINS", "KILLS", "DEATHS", "EXP", "LVL"]];
-                    
+        
+        let description = "";
         for (let i = 0; i < max_fields && i < data.length; i++){
             const field = data[i];
             const exp = parseInt(field?.experience, 10);
             const level = get_level(exp);
-            table_data.push(["#" + (i + 1), restrict_text(field?.nick, 20), format_score(field?.coins), format_score(field?.kills), format_score(field?.deaths), format_score(field?.experience), level.toString()]);
+            description += `${i + 1}. ${restrict_text(field?.nick, 20)}: \`${format_score(field?.coins)} 🪙\` \`${format_score(field?.kills)} ⚔️\` \`${format_score(field?.deaths)} 💀\` \`${format_score(field?.experience)} 🛠️\` \`${level} 💪\`\n`;
         }
 
-        const attachment = new AttachmentBuilder(table(table_data));
-        attachment.name = "table.png";
+        embed.setDescription(description, {split: false});
 
-        embed.setImage(`attachment://${attachment.name}`);
+        embed.addFields(
+            {name: "> __Coins__", value: "> 🪙", inline: true},
+            {name: "> __Kills__", value: "> ⚔️", inline: true},
+            {name: "> __Deaths__", value: "> 💀", inline: true},
+            {name: "> __Experience__", value: "> 🛠️", inline: true},
+            {name: "> __Level__", value: "> 💪", inline: true}
+        );
+
         embed.setTimestamp();
 
         await interaction.editReply({
-            embeds: [embed], 
-            files: [attachment]
+            embeds: [embed]
         });
     }catch(error){
         await interaction.editReply(`Failed to generate Weekly ranking...\nContact ${client.application.owner} to resolve this issue.`);
@@ -260,25 +263,29 @@ async function get_monthly(interaction, client){
         const embed = new EmbedBuilder();
 
         embed.setTitle("🔥 Monthly Ranking 🔥");
-
-        const table_data = [["IDX", "NICK", "COINS", "KILLS", "DEATHS", "EXP", "LVL"]];
-                    
+        
+        let description = "";
         for (let i = 0; i < max_fields && i < data.length; i++){
             const field = data[i];
             const exp = parseInt(field?.experience, 10);
             const level = get_level(exp);
-            table_data.push(["#" + (i + 1), restrict_text(field?.nick, 20), format_score(field?.coins), format_score(field?.kills), format_score(field?.deaths), format_score(field?.experience), level.toString()]);
+            description += `${i + 1}. ${restrict_text(field?.nick, 20)}: \`${format_score(field?.coins)} 🪙\` \`${format_score(field?.kills)} ⚔️\` \`${format_score(field?.deaths)} 💀\` \`${format_score(field?.experience)} 🛠️\` \`${level} 💪\`\n`;
         }
 
-        const attachment = new AttachmentBuilder(table(table_data));
-        attachment.name = "table.png";
+        embed.setDescription(description, {split: false});
 
-        embed.setImage(`attachment://${attachment.name}`);
+        embed.addFields(
+            {name: "> __Coins__", value: "> 🪙", inline: true},
+            {name: "> __Kills__", value: "> ⚔️", inline: true},
+            {name: "> __Deaths__", value: "> 💀", inline: true},
+            {name: "> __Experience__", value: "> 🛠️", inline: true},
+            {name: "> __Level__", value: "> 💪", inline: true}
+        );
+
         embed.setTimestamp();
 
         await interaction.editReply({
-            embeds: [embed],
-            files: [attachment]
+            embeds: [embed]
         });
     }catch(error){
         await interaction.editReply(`Failed to generate Monthly ranking...\nContact ${client.application.owner} to resolve this issue.`);
@@ -304,25 +311,29 @@ async function get_overall(interaction, client){
         const embed = new EmbedBuilder();
 
         embed.setTitle("🔥 Overall Ranking (EXP) 🔥");
-
-        const table_data = [["IDX", "NICK", "COINS", "KILLS", "DEATHS", "EXP", "LVL"]];
         
+        let description = "";
         for (let i = 0; i < max_fields && i < data.length; i++){
             const field = data[i];
             const exp = parseInt(field?.experience, 10);
             const level = get_level(exp);
-            table_data.push(["#" + (i + 1), restrict_text(field?.nick, 20), format_score(field?.coins), format_score(field?.kills), format_score(field?.deaths), format_score(field?.experience), level.toString()]);
+            description += `${i + 1}. ${restrict_text(field?.nick, 20)}: \`${format_score(field?.coins)} 🪙\` \`${format_score(field?.kills)} ⚔️\` \`${format_score(field?.deaths)} 💀\` \`${format_score(field?.experience)} 🛠️\` \`${level} 💪\`\n`;
         }
 
-        const attachment = new AttachmentBuilder(table(table_data));
-        attachment.name = "table.png";
+        embed.setDescription(description, {split: false});
 
-        embed.setImage(`attachment://${attachment.name}`);
+        embed.addFields(
+            {name: "> __Coins__", value: "> 🪙", inline: true},
+            {name: "> __Kills__", value: "> ⚔️", inline: true},
+            {name: "> __Deaths__", value: "> 💀", inline: true},
+            {name: "> __Experience__", value: "> 🛠️", inline: true},
+            {name: "> __Level__", value: "> 💪", inline: true}
+        );
+
         embed.setTimestamp();
 
         await interaction.editReply({
-            embeds: [embed],
-            files: [attachment]
+            embeds: [embed]
         });
     }catch(error){
         await interaction.editReply(`Failed to generate Overall ranking...\nContact ${client.application.owner} to resolve this issue.`);
@@ -349,22 +360,25 @@ async function get_adventurer(interaction, client){
 
         embed.setTitle("🤠 Adventurer Ranking 🤠");
 
-        const table_data = [["RANK", "NICK", "LVL", "SCORE", "ID"]];
-                    
+        let description = "";
         for (let i = 0; i < max_fields && i < data.length; i++){
             const field = data[i];
-            table_data.push(["#" + field?.rank, restrict_text(field?.nick, 20), get_level_adventurer(field?.score).toString(), format_score(field?.score), field?.id.toString()]);
+            const level = get_level_adventurer(field?.score);
+            description += `${i + 1}. ${restrict_text(field?.nick, 20)}: \`${level} 💪\` \`${format_score(field?.score)} 💯\` \`${field?.id} 🏷️\`\n`;
         }
 
-        const attachment = new AttachmentBuilder(table(table_data));
-        attachment.name = "table.png";
+        embed.setDescription(description, {split: false});
 
-        embed.setImage(`attachment://${attachment.name}`);
+        embed.addFields(
+            {name: "> __Level ADV__", value: "> 💪", inline: true},
+            {name: "> __Score__", value: "> 💯", inline: true},
+            {name: "> __User ID__", value: "> 🏷️", inline: true}
+        );
+        
         embed.setTimestamp();
 
         await interaction.editReply({
-            embeds: [embed],
-            files: [attachment]
+            embeds: [embed]
         });
     }catch(error){
         await interaction.editReply(`Failed to generate Adventurer ranking...\nContact ${client.application.owner} to resolve this issue.`);
@@ -391,22 +405,25 @@ async function get_relic_hunter(interaction, client){
 
         embed.setTitle("🏺 Relic Hunter Ranking 🏺");
 
-        const table_data = [["RANK", "NICK", "LVL", "SCORE", "ID"]];
-                    
+        let description = "";
         for (let i = 0; i < max_fields && i < data.length; i++){
             const field = data[i];
-            table_data.push(["#" + field?.rank, restrict_text(field?.nick, 20), get_level_adventurer(field?.score).toString(), format_score(field?.score), field?.id.toString()]);
+            const level = get_level_adventurer(field?.score);
+            description += `${i + 1}. ${restrict_text(field?.nick, 20)}: \`${level} 💪\` \`${format_score(field?.score)} 💯\` \`${field?.id} 🏷️\`\n`;
         }
 
-        const attachment = new AttachmentBuilder(table(table_data));
-        attachment.name = "table.png";
+        embed.setDescription(description, {split: false});
 
-        embed.setImage(`attachment://${attachment.name}`);
+        embed.addFields(
+            {name: "> __Level RLH__", value: "> 💪", inline: true},
+            {name: "> __Score__", value: "> 💯", inline: true},
+            {name: "> __User ID__", value: "> 🏷️", inline: true}
+        );
+
         embed.setTimestamp();
 
         await interaction.editReply({
             embeds: [embed],
-            files: [attachment]
         });
     }catch(error){
         await interaction.editReply(`Failed to generate Hunter Ranking ranking...\nContact ${client.application.owner} to resolve this issue.`);
@@ -432,30 +449,33 @@ async function get_speedrun(interaction, client){
 
         const embed = new EmbedBuilder();
 
-        embed.setTitle("🏁 Speedrun Ranking 🏁");
-        embed.setDescription("Do you also want to be included in the leaderboard?\nUse the \`/speedrun\` command on GoBattle.io to start a speedrun session and try to do better than the others!");
+        embed.setTitle(`🏁 Speedrun Ranking (${data.name || "_Unknown?_"}) 🏁`);
+
+        let description = "Do you also want to be included in the leaderboard?\nUse the \`/speedrun\` command on GoBattle.io to start a speedrun session and try to do better than the others!\n";
+        const ranking = data.ranking;
+        const list_size = ranking.length;
+        for (var i = 0; i < max_fields && i < list_size; i++){
+            const field = ranking[i];
+            const time = format_speed_run_time(field?.time);
+            description += `${field?.rank}. ${restrict_text(field?.nick, 20)}: \`${time} ⏱️\` \`${field?.id} 🏷️\`\n`;
+        }
+
+        embed.setDescription(description);
+
         embed.addFields(
             {name: "> 🏰 __Dungeon name__", value: `> **${data.name || "_Unknown?_"}**`, inline: true},
             {name: "> 🏷️ __Dungeon ID__", value: `> ${dungeon_id}`, inline: true}
         );
 
-        const table_data = [["RANK", "NICK", "TIME", "ID"]];
-        const ranking = data.ranking;
-        const list_size = ranking.length;
-        for (var i = 0; i < max_fields && i < list_size; i++){
-            const field = ranking[i];
-            table_data.push([field?.rank.toString(), restrict_text(field?.nick, 20), format_speed_run_time(field?.time), field?.id.toString()]);
-        }
+        embed.addFields(
+            {name: "> __Time__", value: "> ⏱️", inline: true},
+            {name: "> __User ID__", value: "> 🏷️", inline: true}
+        );
 
-        const attachment = new AttachmentBuilder(table(table_data));
-        attachment.name = "table.png";
-
-        embed.setImage(`attachment://${attachment.name}`);
         embed.setTimestamp();
 
         await interaction.editReply({
-            embeds: [embed],
-            files: [attachment]
+            embeds: [embed]
         });
     }catch(error){
         await interaction.editReply(`Failed to generate Speedrun ranking...\nContact ${client.application.owner} to resolve this issue.`);
