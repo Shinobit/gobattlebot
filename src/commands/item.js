@@ -143,7 +143,7 @@ async function get_ultrarare_drops(interaction, client){
                 }
             }
 
-            description += `* ${restrict_text(name_ultra || "*Unknow?*", 45)}: \`${format_score(value)} (${(value / total_ultrarare * 100).toPrecision(2)}%) 📤\` \`${key} 🏷️\`\n`;
+            description += `* ${restrict_text(name_ultra || "*Unknow?*", 45)}#${key}: \`${format_score(value)} (${(value / total_ultrarare * 100).toPrecision(2)}%)\`\n`;
         }
 
         embed.setDescription(description, {split: false});
@@ -151,11 +151,6 @@ async function get_ultrarare_drops(interaction, client){
         embed.addFields(
             {name: "> 🌟 __Ultrarare__", value: `> ${(drops_ratio * 100).toPrecision(2)}%`, inline: true},
             {name: "> 📦 __Other__", value: `> ${((1 - drops_ratio) * 100).toPrecision(2)}%`, inline: true}
-        );
-
-        embed.addFields(
-            {name: "> __Drops__", value: "> 📤", inline: true},
-            {name: "> __Item ID__", value: "> 🏷️", inline: true}
         );
 
         embed.setTimestamp();

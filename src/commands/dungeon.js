@@ -56,18 +56,14 @@ async function get_list(interaction, client){
     embed.setDescription(description, {split: false});
 
     for (const dungeon_data of dungeon_list){
-        description += `* ${restrict_text(dungeon_data.name || "*Unknow?*", 45)}: \`${dungeon_data.id} 🏷️\` \`${dungeon_data.min_level || "Unknow?"} 💪\`\n`;
+        description += `* ${restrict_text(dungeon_data.name || "*Unknow?*", 45)}#${dungeon_data.id}: \`${dungeon_data.min_level || "Unknow?"} 💪\`\n`;
     }
 
     embed.setDescription(description, {split: false});
 
     embed.addFields(
         {name: "> 🔢 __Number of dungeons__", value: `> ${dungeon_list.length}`, inline: true},
-    );
-
-    embed.addFields(
-        {name: "> __Min level__", value: "> 💪", inline: true},
-        {name: "> __Dungeon ID__", value: "> 🏷️", inline: true}
+        {name: "> __Min level__", value: "> 💪", inline: true}
     );
 
     embed.setTimestamp();

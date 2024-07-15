@@ -97,18 +97,14 @@ async function get_list(interaction, client){
                 is_online = false;
             }
 
-            description += `* ${restrict_text(field?.friendlyName, 25)}: \`${field?.id} 🏷️\` \`${field?.version} 🔁\` \`${field?.admin} 🛠️\` \`${(is_online ? "Online" : "Down")} 🌐\`\n`;
+            description += `* ${restrict_text(field?.friendlyName, 25)}#${field?.id}: \`${field?.version} 🔁\` \`${field?.admin} 🛠️\` \`${(is_online ? "Online" : "Down")} 🌐\`\n`;
         }
 
-        embed.setDescription(description, {split: false});
+        embed.setDescription(description);
 
         embed.addFields(
             {name: "> 🎮 __Platform__", value: `> ${platform}`, inline: true},
-            {name: "> 🔃 __Requested version__", value: `> ${version.toString()}`, inline: true}
-        );
-
-        embed.addFields(
-            {name: "> __Server ID__", value: "> 🏷️", inline: true},
+            {name: "> 🔃 __Requested version__", value: `> ${version.toString()}`, inline: true},
             {name: "> __Version__", value: "> 🔁", inline: true},
             {name: "> __Administrator level__", value: "> 🛠️", inline: true},
             {name: "> __Server status__", value: "> 🌐", inline: true}

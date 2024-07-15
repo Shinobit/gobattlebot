@@ -171,19 +171,14 @@ async function get_king(interaction, client){
         const ranking = data?.ranking;
         for (let i = 0; i < max_fields && i < ranking.length; i++){
             const field = ranking[i];
-            description += `${i + 1}. ${restrict_text(field?.nick, 20)}: \`${format_score(field?.reputation)} 🔱\` \`${field?.id} 🏷️\`\n`;
+            description += `${i + 1}. ${restrict_text(field?.nick, 20)}#${field?.id}: \`${format_score(field?.reputation)} REP\`\n`;
         }
 
-        embed.setDescription(description, {split: false});
+        embed.setDescription(description);
 
 	    embed.addFields(
             {name: "> 🗓 __Week__", value: `> ${data?.week || "_Unknown?_"}`, inline: true},
             {name: "> 🗓 __Year__", value: `> ${data?.year || "_Unknown?_"}`, inline: true}
-        );
-
-        embed.addFields(
-            {name: "> __Reputation__", value: "> 🔱", inline: true},
-            {name: "> __User ID__", value: "> 🏷️", inline: true}
         );
 
         embed.setTimestamp();
@@ -221,10 +216,10 @@ async function get_weekly(interaction, client){
             const field = data[i];
             const exp = parseInt(field?.experience, 10);
             const level = get_level(exp);
-            description += `${i + 1}. ${restrict_text(field?.nick, 20)}: \`${format_score(field?.coins)} 🪙\` \`${format_score(field?.kills)} ⚔️\` \`${format_score(field?.deaths)} 💀\` \`${format_score(field?.experience)} 🛠️\` \`${level} 💪\`\n`;
+            description += `${i + 1}. ${restrict_text(field?.nick, 20)}: \`${format_score(field?.coins)}🪙\` \`${format_score(field?.kills)}⚔️\` \`${format_score(field?.deaths)}💀\` \`${format_score(field?.experience)}🛠️\` \`${level}💪\`\n`;
         }
 
-        embed.setDescription(description, {split: false});
+        embed.setDescription(description);
 
         embed.addFields(
             {name: "> __Coins__", value: "> 🪙", inline: true},
@@ -269,10 +264,10 @@ async function get_monthly(interaction, client){
             const field = data[i];
             const exp = parseInt(field?.experience, 10);
             const level = get_level(exp);
-            description += `${i + 1}. ${restrict_text(field?.nick, 20)}: \`${format_score(field?.coins)} 🪙\` \`${format_score(field?.kills)} ⚔️\` \`${format_score(field?.deaths)} 💀\` \`${format_score(field?.experience)} 🛠️\` \`${level} 💪\`\n`;
+            description += `${i + 1}. ${restrict_text(field?.nick, 20)}: \`${format_score(field?.coins)}🪙\` \`${format_score(field?.kills)}⚔️\` \`${format_score(field?.deaths)}💀\` \`${format_score(field?.experience)}🛠️\` \`${level}💪\`\n`;
         }
 
-        embed.setDescription(description, {split: false});
+        embed.setDescription(description);
 
         embed.addFields(
             {name: "> __Coins__", value: "> 🪙", inline: true},
@@ -317,10 +312,10 @@ async function get_overall(interaction, client){
             const field = data[i];
             const exp = parseInt(field?.experience, 10);
             const level = get_level(exp);
-            description += `${i + 1}. ${restrict_text(field?.nick, 20)}: \`${format_score(field?.coins)} 🪙\` \`${format_score(field?.kills)} ⚔️\` \`${format_score(field?.deaths)} 💀\` \`${format_score(field?.experience)} 🛠️\` \`${level} 💪\`\n`;
+            description += `${i + 1}. ${restrict_text(field?.nick, 20)}: \`${format_score(field?.coins)}🪙\` \`${format_score(field?.kills)}⚔️\` \`${format_score(field?.deaths)}💀\` \`${format_score(field?.experience)}🛠️\` \`${level}💪\`\n`;
         }
 
-        embed.setDescription(description, {split: false});
+        embed.setDescription(description);
 
         embed.addFields(
             {name: "> __Coins__", value: "> 🪙", inline: true},
@@ -364,15 +359,14 @@ async function get_adventurer(interaction, client){
         for (let i = 0; i < max_fields && i < data.length; i++){
             const field = data[i];
             const level = get_level_adventurer(field?.score);
-            description += `${i + 1}. ${restrict_text(field?.nick, 20)}: \`${level} 💪\` \`${format_score(field?.score)} 💯\` \`${field?.id} 🏷️\`\n`;
+            description += `${i + 1}. ${restrict_text(field?.nick, 20)}#${field?.id}: \`${level}💪\` \`${format_score(field?.score)}💯\`\n`;
         }
 
-        embed.setDescription(description, {split: false});
+        embed.setDescription(description);
 
         embed.addFields(
             {name: "> __Level ADV__", value: "> 💪", inline: true},
-            {name: "> __Score__", value: "> 💯", inline: true},
-            {name: "> __User ID__", value: "> 🏷️", inline: true}
+            {name: "> __Score__", value: "> 💯", inline: true}
         );
         
         embed.setTimestamp();
@@ -409,15 +403,14 @@ async function get_relic_hunter(interaction, client){
         for (let i = 0; i < max_fields && i < data.length; i++){
             const field = data[i];
             const level = get_level_adventurer(field?.score);
-            description += `${i + 1}. ${restrict_text(field?.nick, 20)}: \`${level} 💪\` \`${format_score(field?.score)} 💯\` \`${field?.id} 🏷️\`\n`;
+            description += `${i + 1}. ${restrict_text(field?.nick, 20)}#${field?.id}: \`${level}💪\` \`${format_score(field?.score)}💯\`\n`;
         }
 
-        embed.setDescription(description, {split: false});
+        embed.setDescription(description);
 
         embed.addFields(
             {name: "> __Level RLH__", value: "> 💪", inline: true},
-            {name: "> __Score__", value: "> 💯", inline: true},
-            {name: "> __User ID__", value: "> 🏷️", inline: true}
+            {name: "> __Score__", value: "> 💯", inline: true}
         );
 
         embed.setTimestamp();
@@ -457,7 +450,7 @@ async function get_speedrun(interaction, client){
         for (var i = 0; i < max_fields && i < list_size; i++){
             const field = ranking[i];
             const time = format_speed_run_time(field?.time);
-            description += `${field?.rank}. ${restrict_text(field?.nick, 20)}: \`${time} ⏱️\` \`${field?.id} 🏷️\`\n`;
+            description += `${field?.rank}. ${restrict_text(field?.nick, 20)}#${field?.id}: \`${time}\`\n`;
         }
 
         embed.setDescription(description);
@@ -466,12 +459,7 @@ async function get_speedrun(interaction, client){
             {name: "> 🏰 __Dungeon name__", value: `> **${data.name || "_Unknown?_"}**`, inline: true},
             {name: "> 🏷️ __Dungeon ID__", value: `> ${dungeon_id}`, inline: true}
         );
-
-        embed.addFields(
-            {name: "> __Time__", value: "> ⏱️", inline: true},
-            {name: "> __User ID__", value: "> 🏷️", inline: true}
-        );
-
+        
         embed.setTimestamp();
 
         await interaction.editReply({

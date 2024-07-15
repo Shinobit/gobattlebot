@@ -415,11 +415,31 @@
             "name": "Flying Skill",
             "tickets": null,
             "drops": null,
-            "id": null,
+            "id": 198,
             "description": "Gives you the skill to dash vertically with your wings",
             "uses": null,
             "is_relic": true,
             "max_in_inventory": 1
+        },
+        {
+            "name": "Dodge Charm",
+            "tickets": 100,
+            "drops": "All",
+            "id": 189,
+            "description": "1% chance of dodging any attack",
+            "uses": null,
+            "is_relic": true,
+            "max_in_inventory": 1
+        },
+        {
+            "name": "Gem Dust",
+            "tickets": 50,
+            "drops": "Stahmite Mines",
+            "id": 191,
+            "description": "Up to 5 dyams (+ Luck) per gem in chests",
+            "uses": null,
+            "is_relic": true,
+            "max_in_inventory": 25
         }
     ]
 }
