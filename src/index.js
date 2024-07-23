@@ -14,6 +14,7 @@ const {get_ping, ping_command} = require("./commands/ping.js");
 const {get_leave, leave_command} = require("./commands/leave.js");
 const {get_setting, setting_command} = require("./commands/setting.js");
 const {get_echo, echo_command} = require("./commands/echo.js");
+const {get_ultrarare_drop_chance, ultrarare_drop_chance_command} = require("./commands/ultrarare_drop_chance.js");
 
 const global_commands = [
     ranking_command,
@@ -26,7 +27,8 @@ const global_commands = [
     dungeon_command,
     date_new_king_command,
     ping_command,
-    leave_command
+    leave_command,
+    ultrarare_drop_chance_command
 ];
 
 const private_commands = [
@@ -138,6 +140,9 @@ client.on("interactionCreate", async (interaction) => {
                 break;
             case "echo":
                 await get_echo(interaction, client);
+                break;
+            case "get_ultrarare_drop_chance":
+                await get_ultrarare_drop_chance(interaction, client);
                 break;
             default:
                 await interaction.reply({content: "This command no longer exists.", ephemeral: true});

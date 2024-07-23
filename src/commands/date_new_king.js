@@ -8,7 +8,7 @@ date_new_king_command.setDescription("Get the date and time remaining before the
 async function get_date_new_king(interaction, client){
     const utc = Math.floor(get_utf_time_next_king() / 1000);
 
-    interaction.reply(`New king on <t:${utc}:F> (<t:${utc}:R>).`);
+    await interaction.reply(`New king on <t:${utc}:F> (<t:${utc}:R>).`);
 }
 
 exports.get_date_new_king = get_date_new_king;
