@@ -1,6 +1,13 @@
-const {SlashCommandBuilder, EmbedBuilder, AttachmentBuilder} = require("discord.js");
+const {SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType, Emoji, parseEmoji} = require("discord.js");
 const {ultra_list} = require("../ultralist.json");
 const {restrict_text, sum, format_score} = require("../utils.js");
+
+const items_map = new Map();
+for (const item_data of ultra_list){
+    if (typeof item_data.id == "number"){
+        items_map.set(item_data.id, item_data);
+    }
+}
 
 const item_command = new SlashCommandBuilder();
 item_command.setName("item");
@@ -56,25 +63,17 @@ async function get_info(interaction, client){
     try{
         const item_id = interaction.options.get("item_id")?.value;
 
-        let item_info;
-        for (const ultra of ultra_list){
-            if (item_id == ultra.id){
-                item_info = ultra;
-                break;
-            }
-        }
+        const item_info = items_map.get(item_id);
 
         if (!item_info){
             await interaction.editReply("Sorry, the specified item does not exist or has not yet been indexed by the Gobattle API.");
             return;
         }
 
-        const attachment = new AttachmentBuilder(__dirname + "/../images/unknown_item.png");
-        attachment.name = "item_icon.png";
-
-        const embed = new EmbedBuilder()
-        embed.setTitle(restrict_text(item_info.name, 60));
-        embed.setThumbnail(`attachment://${attachment.name}`);
+        const emoji = new Emoji(client, parseEmoji(item_info?.emoji || "<:item_91:1267565851536789554>"));
+        const embed = new EmbedBuilder();
+        embed.setTitle(`${emoji} ${restrict_text(item_info.name, 60)}`);
+        embed.setThumbnail(emoji.imageURL());
         embed.setDescription(item_info.description ? restrict_text(item_info.description, 250) : "_Description Unknown_");
         embed.setColor(0x500000);
         embed.addFields(
@@ -98,7 +97,6 @@ async function get_info(interaction, client){
         embed.setFooter({text: "Source: Sage of the Ivy"});
 
         await interaction.editReply({
-            files: [attachment],
             embeds: [embed],
             content: "This feature is under development, information may not be accurate."
         });
@@ -130,35 +128,98 @@ async function get_ultrarare_drops(interaction, client){
         const drops_ratio = total_ultrarare / (total || 1);
 
         const embed = new EmbedBuilder();
+
         embed.setTitle("Current average chance of getting an Ultrarare from a chest.");
 
-        let description = `Results are calculated based on ${total} samples (chest opened by players) including ${total_ultrarare} ultrarare drops.\n`;
+        const chest_emoji = new Emoji(client, parseEmoji("<:item_760:1267561884610203650>"));
+        const header_description = `Results are calculated based on ${total} samples (*chest opened by players ${chest_emoji}*) including ${total_ultrarare} ultrarare drops.\n`;
+        const max_items_by_pages = 7;
+        const pages = new Array(Math.ceil(values.length / max_items_by_pages));
+
         const drops_entries = Object.entries(drops);
-        for (const [key, value] of drops_entries){
-            let name_ultra;
-            for (const ultra_data of ultra_list){
-                if (ultra_data.id && ultra_data.id == key){
-                    name_ultra = ultra_data.name;
-                    break;
-                }
+
+        let current_page = -1;
+        for (let i = 0; i < values.length; i++){
+            if (Math.floor(i / max_items_by_pages) != current_page){
+                current_page++;
+                pages[current_page] = header_description;
             }
 
-            description += `* ${restrict_text(name_ultra || "*Unknow?*", 45)}#${key}: \`${format_score(value)} (${(value / total_ultrarare * 100).toPrecision(2)}%)\`\n`;
+            const [key, value] = drops_entries[i];
+            const ultra_info = items_map.get(parseInt(key, 10));
+            const emoji = new Emoji(client, parseEmoji(ultra_info?.emoji || "<:item_91:1267565851536789554>"));
+            pages[current_page] += `* ${emoji} **${restrict_text(ultra_info?.name || "*Unknow?*", 45)}**#${key}: \`${format_score(value)} (${(value / total_ultrarare * 100).toPrecision(2)}%)\`\n`;
         }
 
-        embed.setDescription(description, {split: false});
+        current_page = 1;
+        embed.setDescription(pages[current_page - 1] || "***There are no items to display in this list at the moment...***");
 
         embed.addFields(
             {name: "> 🌟 __Ultrarare__", value: `> ${(drops_ratio * 100).toPrecision(2)}%`, inline: true},
             {name: "> 📦 __Other__", value: `> ${((1 - drops_ratio) * 100).toPrecision(2)}%`, inline: true}
         );
 
+        const nb_pages = pages.length || 1;
+        
+        embed.setFooter({text: `Page ${current_page}/${nb_pages}`});
         embed.setTimestamp();
 
-        await interaction.editReply({
+		const previous_button = new ButtonBuilder();
+        previous_button.setCustomId("previous");
+        previous_button.setEmoji("◀️");
+        previous_button.setStyle(ButtonStyle.Primary);
+        previous_button.setDisabled(current_page == 1);
+
+        const next_button = new ButtonBuilder();
+        next_button.setCustomId("next");
+        next_button.setEmoji("▶️");
+        next_button.setStyle(ButtonStyle.Primary);
+        next_button.setDisabled(current_page == nb_pages);
+
+        const row = new ActionRowBuilder();
+        row.addComponents(previous_button, next_button);
+
+        const response_interaction = await interaction.editReply({
             content: "Special mention to _Sage of the Ivy_ for providing some metadata on most of the game's ultrarares while waiting for the GoBattle API update!\nThanks to him!",
-            embeds: [embed]
+            embeds: [embed],
+            components: [row]
         });
+
+        function collector_filter(m){
+            const result = m.user.id == interaction.user.id;
+
+            if (!result){
+                m.reply({content: "You cannot interact with a command that you did not initiate yourself.", ephemeral: true}).catch((error) => {
+                    console.error(error);
+                });
+            }
+
+            return result;
+        }
+
+        async function button_interaction_logic(response_interaction){
+            try{
+                const confirmation = await response_interaction.awaitMessageComponent({filter: collector_filter, componentType: ComponentType.Button, time: 60_000});
+
+                if (confirmation.customId === "previous"){
+                    current_page--;
+                } else if (confirmation.customId === "next"){
+                    current_page++;
+                }
+
+                embed.setDescription(pages[current_page - 1]);
+                embed.setFooter({text: `Page ${current_page}/${nb_pages}`});
+                previous_button.setDisabled(current_page == 1);
+                next_button.setDisabled(current_page == nb_pages);
+
+                response_interaction = await confirmation.update({embeds: [embed], components: [row]});
+                await button_interaction_logic(response_interaction);
+            }catch (_error){
+                await interaction.editReply({content: "-# ⓘ This interaction has expired, please use the command again to be able to navigate the list.", components: []});
+            }
+        }
+
+        await button_interaction_logic(response_interaction);
     }catch(error){
         await interaction.editReply(`Unable to generate template.\nContact ${client.application.owner} to resolve this issue.`);
         console.error(error);

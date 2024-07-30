@@ -1,4 +1,4 @@
-const {ChannelType, PermissionFlagsBits} = require("discord.js");
+const {ChannelType, PermissionFlagsBits, User, Team} = require("discord.js");
 
 function restrict_text(str, nb){
     if (str.length > nb){
@@ -97,6 +97,26 @@ async function send_echo(client, message){
     }
 }
 
+function is_my_developer(client, user){
+    if (client.application.owner instanceof User){
+        return user == client.application.owner;
+    }else if (client.application.owner instanceof Team){
+        let is_member = false;
+
+        const members_id = client.application.owner.members.keys();
+
+        for (const user_id of members_id){
+            is_member = user_id == user.id;
+
+            if (is_member){
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
+
 exports.restrict_text = restrict_text;
 exports.format_score = format_score;
 exports.format_speed_run_time = format_speed_run_time;
@@ -107,3 +127,4 @@ exports.get_utf_time_next_king = get_utf_time_next_king;
 exports.sum = sum;
 exports.send_echo = send_echo;
 exports.get_first_chat_channel = get_first_chat_channel;
+exports.is_my_developer = is_my_developer;

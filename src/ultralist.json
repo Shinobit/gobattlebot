@@ -6,10 +6,11 @@
             "tickets": 500,
             "drops": "Sky's Prison",
             "id": 155,
-            "description": "This object does: It restores 50 points of your fatigue and boosts your defense by 50% for 40 seconds.",
+            "description": "It restores 50 points of your fatigue and boosts your defense by 50% for 40 seconds.",
             "uses": 3,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_506:1267561503029067847>"
         },
         {
             "name": "Gobattle Ring",
@@ -19,7 +20,8 @@
             "description": "Increases 50% of your attack, defense, speed, and jump for 30 seconds. Gives Invincibility for 30 seconds.",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_512:1267561027055128599>"
         },
         {
             "name": "Firebreath Ring",
@@ -29,7 +31,8 @@
             "description": "Invokes a fire attack, ring has 10 uses. The attack varies by the users attack. Sometimes, it will work with blue ring.",
             "uses": 10,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_502:1267561518808039454>"
         },
         {
             "name": "Blue Ring",
@@ -39,7 +42,8 @@
             "description": "Increases your power attack 3x for 30 seconds",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_520:1267561452672122972>"
         },
         {
             "name": "Red Ring",
@@ -49,7 +53,8 @@
             "description": "Regenerates your health 8 times faster for 1 minute",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_515:1267561468811935774>"
         },
         {
             "name": "Bloodmoon Ring",
@@ -59,7 +64,8 @@
             "description": "A mystical ring that, when activated, conjures four fearsome bats with crimson eyes, serving as loyal companions and formidable allies under the blood moon's eerie light.",
             "uses": 3,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_510:1267561480509718548>"
         },
         {
             "name": "Anti Freezing Glove",
@@ -69,7 +75,8 @@
             "description": "Freeze protection for 60 seconds, your speed decreases 20%",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_431:1267569371455160390>"
         },
         {
             "name": "Instant Strength Glove",
@@ -79,7 +86,8 @@
             "description": "Increases your power attack 20% during 40 seconds, your defense decreases 20%",
             "uses": 7,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_435:1267569402941800468>"
         },
         {
             "name": "Epic Strength Glove",
@@ -89,7 +97,8 @@
             "description": "Increases your power attack 50% during 40 seconds, your defense decreases 30%",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_441:1267569470382149804>"
         },
         {
             "name": "Gravity Feather",
@@ -99,7 +108,8 @@
             "description": "Your gravity decreases 50% during 30 seconds, your defense decreases 20%",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_754:1267573693458944010>"
         },
         {
             "name": "Team Gravity Feather",
@@ -109,7 +119,8 @@
             "description": "For a duration of 40 seconds, the gravity affecting both you and your group members will decrease by 50%. Additionally, your attack with increase by 20%.",
             "uses": 3,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_749:1267561874350805043>"
         },
         {
             "name": "Hermes Boots",
@@ -119,7 +130,8 @@
             "description": "Increases your speed 50% for 40 seconds",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_133:1267565695907139708>"
         },
         {
             "name": "Speed Boots",
@@ -129,7 +141,8 @@
             "description": "Increases speed 20%, your defense decreases 20%",
             "uses": 7,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_139:1267565745345134662>"
         },
         {
             "name": "Maximum Speed Boots",
@@ -139,7 +152,8 @@
             "description": "Increases speed 75% during 40 seconds, your defense decreases 30%",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_140:1267565753297666099>"
         },
         {
             "name": "Normal Invisibility Cloak",
@@ -149,7 +163,8 @@
             "description": "Makes you invisible for 20 seconds",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_235:1267564036426436791>"
         },
         {
             "name": "Extreme Invisibility Cloak",
@@ -159,7 +174,8 @@
             "description": "Makes you invisible for 60 seconds, decreases your attack 20%",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_264:1267564565525299301>"
         },
         {
             "name": "Instant Defense Cloak",
@@ -169,7 +185,8 @@
             "description": "Increases your defense 50% during 40 seconds, your power attack decreases 20%",
             "uses": 7,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_236:1267564043107827744>"
         },
         {
             "name": "Epic Instant Defense Cloak",
@@ -179,17 +196,19 @@
             "description": "Increases defense by 80%, attack decreases 40%.",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_262:1267564548672721007>"
         },
         {
-            "name": "Health Regeneration Cloak",
+            "name": "Normal Health Regeneration Cloak",
             "tickets": 3000,
             "drops": "Sawmill",
             "id": 30,
             "description": "Regenerates health points 200% faster during 40",
             "uses": 7,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_240:1267564050737532929>"
         },
         {
             "name": "Maximum Health Regeneration Cloak",
@@ -199,7 +218,8 @@
             "description": "Regenerates health points 400% faster during 60 seconds, your power attack decreases 20%",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_260:1267564530196680795>"
         },
         {
             "name": "Normal Venom Protection Cloak",
@@ -209,17 +229,19 @@
             "description": "Protects you from venom during 40 seconds",
             "uses": 7,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_242:1267564066763706419>"
         },
         {
-            "name": "Extraordinary Venom Protection Cloak",
+            "name": "Extreme Venom Protection Cloak",
             "tickets": 2000,
             "drops": "Spider's Lair",
             "id": 36,
             "description": "Protects you from venom during 60 seconds, your power attack decreases 20%",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_261:1267564540917186580>"
         },
         {
             "name": "Maximum Fire Protection Cloak",
@@ -229,7 +251,8 @@
             "description": "Protects you from fire during 60 seconds.",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_268:1267564588644307005>"
         },
         {
             "name": "Fire Protection Cloak",
@@ -239,7 +262,8 @@
             "description": "It protects you from fire during 30 seconds.",
             "uses": 7,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_249:1267564125827895436>"
         },
         {
             "name": "Breath Helmet",
@@ -249,7 +273,8 @@
             "description": "You can breathe underwater 4x the initial time (40 seconds total)",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": null
+            "max_in_inventory": null,
+            "emoji": "<:item_267:1267564398747320432>"
         },
         {
             "name": "Lava Armor Protector",
@@ -259,17 +284,19 @@
             "description": "Protects you from lava damage during 60 seconds, decreases 20% of your velocity.",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_251:1267568057325322321>"
         },
         {
-            "name": "Fire Enchantment",
+            "name": "Anti Fire Enchantment",
             "tickets": 100,
             "drops": "All",
             "id": 116,
             "description": "Stops fire on people around you and yourself, not repairable",
             "uses": 5,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_388:1267565242775371887>"
         },
         {
             "name": "Epic Invicibility Potion",
@@ -279,7 +306,8 @@
             "description": "Makes you invincible (you don't take damage besides from debuffs) for 40 seconds",
             "uses": 1,
             "is_relic": false,
-            "max_in_inventory": null
+            "max_in_inventory": null,
+            "emoji": "<:item_551:1267570796818206902>"
         },
         {
             "name": "Firebreath's Blood",
@@ -289,7 +317,8 @@
             "description": "Invokes fire attack. Not repairable, one use.",
             "uses": 1,
             "is_relic": false,
-            "max_in_inventory": null
+            "max_in_inventory": null,
+            "emoji": "<:item_745:1267573567013519401>"
         },
         {
             "name": "Special Halloween Broom",
@@ -299,7 +328,8 @@
             "description": "You can use this broom to fly for 10 minutes. Linked to Halloween World. If you dismount or you leave Halloween world, the object will disappear.",
             "uses": 1,
             "is_relic": false,
-            "max_in_inventory": null
+            "max_in_inventory": null,
+            "emoji": "<:item_761:1267573805639929936>"
         },
         {
             "name": "Sleigh Enchantment",
@@ -309,7 +339,8 @@
             "description": "This enchantment invokes a flying sleigh that you can use as a mount for 10 minutes. You cannot use this object inside a dungeon. Bound object.",
             "uses": 1,
             "is_relic": false,
-            "max_in_inventory": null
+            "max_in_inventory": null,
+            "emoji": "<:item_395:1267569075194953868>"
         },
         {
             "name": "Special Christmas Hat",
@@ -319,7 +350,8 @@
             "description": "You can use this hat to fly with a sleigh like Santa for 10 minutes. This object is linked to Winter Wonderland. If you dismount or you leave Winterland, it will disappear.",
             "uses": 1,
             "is_relic": false,
-            "max_in_inventory": null
+            "max_in_inventory": null,
+            "emoji": "<:item_764:1267563728409333873>"
         },
         {
             "name": "Peppermint Strike",
@@ -329,7 +361,8 @@
             "description": "Unleash the Peppermint Strike, a sweet and powerful attack that swirls through adversaries with the refreshing force of a candy cane breeze.",
             "uses": 3,
             "is_relic": false,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_801:1267574341202088118>"
         },
         {
             "name": "Dice of Destiny",
@@ -339,7 +372,8 @@
             "description": "Increases your luck 1%",
             "uses": null,
             "is_relic": true,
-            "max_in_inventory": 16
+            "max_in_inventory": 16,
+            "emoji": "<:item_810:1267563864900239381>"
         },
         {
             "name": "Iron Heart",
@@ -349,7 +383,8 @@
             "description": "Increases max health 2%",
             "uses": null,
             "is_relic": true,
-            "max_in_inventory": null
+            "max_in_inventory": null,
+            "emoji": "<:item_811:1267563849608069120>"
         },
         {
             "name": "Rejuvenation Gem",
@@ -359,7 +394,8 @@
             "description": "Increases regeneration 2%",
             "uses": null,
             "is_relic": true,
-            "max_in_inventory": null
+            "max_in_inventory": null,
+            "emoji": "<:item_812:1267563856541126686>"
         },
         {
             "name": "Inferno Touch",
@@ -369,7 +405,8 @@
             "description": "1% chance of burning effect (PVP)",
             "uses": null,
             "is_relic": true,
-            "max_in_inventory": null
+            "max_in_inventory": null,
+            "emoji": "<:item_813:1267563837427552337>"
         },
         {
             "name": "Greed's Grip",
@@ -379,17 +416,8 @@
             "description": "Attract coins close to you",
             "uses": null,
             "is_relic": true,
-            "max_in_inventory": null
-        },
-        {
-            "name": "Flying Skill",
-            "tickets": null,
-            "drops": null,
-            "id": 198,
-            "description": null,
-            "uses": null,
-            "is_relic": null,
-            "max_in_inventory": null
+            "max_in_inventory": null,
+            "emoji": "<:item_814:1267574519376384122>"
         },
         {
             "name": "Dwarf's Strength",
@@ -399,7 +427,8 @@
             "description": "Increases reach of Axes 8%",
             "uses": null,
             "is_relic": true,
-            "max_in_inventory": 16
+            "max_in_inventory": 16,
+            "emoji": "<:item_815:1267574531015573524>"
         },
         {
             "name": "Talisman of the Phoenix",
@@ -409,7 +438,8 @@
             "description": null,
             "uses": null,
             "is_relic": true,
-            "max_in_inventory": null
+            "max_in_inventory": null,
+            "emoji": "<:item_798:1267574301750722651>"
         },
         {
             "name": "Flying Skill",
@@ -419,7 +449,8 @@
             "description": "Gives you the skill to dash vertically with your wings",
             "uses": null,
             "is_relic": true,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_820:1267560357895868529>"
         },
         {
             "name": "Dodge Charm",
@@ -429,7 +460,8 @@
             "description": "1% chance of dodging any attack",
             "uses": null,
             "is_relic": true,
-            "max_in_inventory": 1
+            "max_in_inventory": 1,
+            "emoji": "<:item_817:1267574569955233802>"
         },
         {
             "name": "Gem Dust",
@@ -439,7 +471,8 @@
             "description": "Up to 5 dyams (+ Luck) per gem in chests",
             "uses": null,
             "is_relic": true,
-            "max_in_inventory": 25
+            "max_in_inventory": 25,
+            "emoji": "<:item_819:1267560608186761359>"
         }
     ]
 }

@@ -1,5 +1,6 @@
-const {Client, Partials, IntentsBitField, Routes, ActivityType} = require("discord.js");
-const {get_first_chat_channel} = require("./utils.js");
+const {Client, Partials, IntentsBitField, Routes, ActivityType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, TextInputBuilder} = require("discord.js");
+const {get_first_chat_channel, is_my_developer, restrict_text} = require("./utils.js");
+const {ultra_list} = require("./ultralist.json");
 
 const {get_ranking, ranking_command} = require("./commands/ranking.js");
 const {get_help, help_command} = require("./commands/help.js");
@@ -58,7 +59,7 @@ client.on("ready", async (event) => {
     await client.application.fetch();
 
     try{
-        client.rest.put(
+        await client.rest.put(
             Routes.applicationCommands(client.user.id),
             {body: global_commands}
         );
@@ -77,6 +78,25 @@ client.on("ready", async (event) => {
             console.error(error);
         }
     }
+
+
+    //test
+    /*const guild = await client.guilds.fetch("380588354934276097");
+    
+    guild.channels.cache.forEach((channel) => {
+        if (channel.type == 0){
+        console.log(`${channel.name} (${channel.type}) - ${channel.id}`);
+        }
+      });
+
+      const gg = await client.channels.fetch("1148723323761606809");
+      
+      gg.messages.fetch({limit: 100}).then(messages => {
+        console.log(`Received ${messages.size} messages`);
+        //Iterate through the messages here with the variable "messages".
+        messages.forEach(message => console.log(message.author.globalName, ": ", message.content))
+      })
+*/
 });
 
 client.on("guildCreate", async (guild) => {
@@ -158,25 +178,39 @@ client.on("messageCreate", async (msg) => {
     }
 
     try{
+        /*
+        if (msg.guildId == "1235330175449825310"){
+            const gg = await client.channels.fetch("380588355403907082");
+            await gg.send("Kuwazy told me to send you this message:\n" + msg.content);
+        }
+        */
         const command = msg.content.trim().toLowerCase();
 
         // Quick commands for development.
         switch (command){
             case "!gb_bot_guilds":
-                if (msg.author != client.application.owner){
-                    await msg.reply(`You are not ${client.application.owner}, you do not have the right to use this command.`);
+                if (!is_my_developer(client, msg.author)){
+                    await msg.reply("You do not have permission to use this command.");
                     return;
                 }
 
                 const guilds = client.guilds.cache;
                 let message = "# List of guilds I am in:\n\n";
-                let i = 0;
                 for (const guild of guilds.values()){
-                    i++;
-                    message += `**#${i}** ${guild.name}: \`${guild.id}\`,\n`;
+                    message += `* ${guild.name}: \`${guild.id}\`,\n`;
                 }
                 message += `(${guilds.size} Guilds)`;
                 await msg.reply(message);
+                
+                break;
+            case "!get_off_this_server":
+                if (!is_my_developer(client, msg.author)){
+                    await msg.reply("You do not have permission to use this command.");
+                    return;
+                }
+
+                await msg.reply("Well, I'm leaving this guild because I seem to be disturbing... STFU.");
+                await msg.guild.leave();
                 
                 break;
         }

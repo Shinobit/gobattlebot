@@ -1,4 +1,4 @@
-const {SlashCommandBuilder, AttachmentBuilder, EmbedBuilder} = require("discord.js");
+const {SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType} = require("discord.js");
 const zlib = require("zlib");
 const {restrict_text} = require("../utils.js");
 
@@ -53,22 +53,95 @@ async function get_list(interaction, client){
 
         const data = await response.json();
 
-        let content = "";
+        const embed = new EmbedBuilder();
+        embed.setTitle("🗂️ List of assets 🗂️");
+
+        const header_description = "List of assets with their respective identifiers:\n";
+        const max_items_by_pages = 10;
+        const pages = new Array(Math.ceil(data.files.length / max_items_by_pages));
+
+        let current_page = -1;
         for (let i = 0; i < data.files.length; i++){
+            if (Math.floor(i / max_items_by_pages) != current_page){
+                current_page++;
+                pages[current_page] = header_description;
+            }
+
             const file = data.files[i];
             const is_compressed = file.file.endsWith("$");
             const file_name = is_compressed ? file.file.slice(0, -1) : file.file;
 
-            content += `#${i + 1} ${file_name}\n`;
+            if (is_compressed){
+                pages[current_page] += `* **${file_name}**#${i + 1}\n`;
+            }else{
+                const url = new URL(`${data.filesBaseURL}/${file_name}`);
+                pages[current_page] += `* **[${file_name}](${url})**#${i + 1}\n`;
+            }
         }
 
-        const attachment = new AttachmentBuilder(Buffer.from(content, "utf-8"));
-        attachment.name = "asset_list.txt";
+        current_page = 1;
+        embed.setDescription(pages[current_page - 1] || "***There are no items to display in this list at the moment...***");
 
-        await interaction.editReply({
-            content: "# Here is the list of assets with their respective identifiers:",
-            files: [attachment]
+        const nb_pages = pages.length || 1;
+
+        embed.setFooter({text: `Page ${current_page}/${nb_pages}`});
+        embed.setTimestamp();
+
+        const previous_button = new ButtonBuilder();
+        previous_button.setCustomId("previous");
+        previous_button.setEmoji("◀️");
+        previous_button.setStyle(ButtonStyle.Primary);
+        previous_button.setDisabled(current_page == 1);
+
+        const next_button = new ButtonBuilder();
+        next_button.setCustomId("next");
+        next_button.setEmoji("▶️");
+        next_button.setStyle(ButtonStyle.Primary);
+        next_button.setDisabled(current_page == nb_pages);
+
+        const row = new ActionRowBuilder();
+        row.addComponents(previous_button, next_button);
+
+        const response_interaction = await interaction.editReply({
+            embeds: [embed],
+            components: [row]
         });
+
+        function collector_filter(m){
+            const result = m.user.id == interaction.user.id;
+
+            if (!result){
+                m.reply({content: "You cannot interact with a command that you did not initiate yourself.", ephemeral: true}).catch((error) => {
+                    console.error(error);
+                });
+            }
+
+            return result;
+        }
+
+        async function button_interaction_logic(response_interaction){
+            try{
+                const confirmation = await response_interaction.awaitMessageComponent({filter: collector_filter, componentType: ComponentType.Button, time: 60_000});
+
+                if (confirmation.customId === "previous"){
+                    current_page--;
+                } else if (confirmation.customId === "next"){
+                    current_page++;
+                }
+
+                embed.setDescription(pages[current_page - 1]);
+                embed.setFooter({text: `Page ${current_page}/${nb_pages}`});
+                previous_button.setDisabled(current_page == 1);
+                next_button.setDisabled(current_page == nb_pages);
+
+                response_interaction = await confirmation.update({embeds: [embed], components: [row]});
+                await button_interaction_logic(response_interaction);
+            }catch (_error){
+                await interaction.editReply({content: "-# ⓘ This interaction has expired, please use the command again to be able to navigate the list.", components: []});
+            }
+        }
+
+        await button_interaction_logic(response_interaction);
     }catch(error){
         await interaction.editReply(`Unable to retrieve file list. \nContact ${client.application.owner} to resolve this issue.`);
         console.error(error);

@@ -1,5 +1,5 @@
 const {EmbedBuilder, AttachmentBuilder, SlashCommandBuilder} = require("discord.js");
-const {restrict_text} = require("../utils.js");
+const {restrict_text, is_my_developer} = require("../utils.js");
 
 const user_command = new SlashCommandBuilder();
 user_command.setName("user");
@@ -93,7 +93,7 @@ async function get_info(interaction, client){
         const user_id = interaction.options.get("user_id")?.value;
         const public = false;
         
-        if (interaction.user != client.application.owner && !public){
+        if (!is_my_developer(client, interaction.user) && !public){
             await interaction.editReply(`Sorry, user _#${user_id}_ does not wish to expose this information to the public.`);
             return;
         }
