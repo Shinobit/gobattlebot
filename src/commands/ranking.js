@@ -1,5 +1,5 @@
-const {EmbedBuilder, SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType, Emoji, parseEmoji} = require("discord.js");
-const {restrict_text, get_level, get_level_adventurer, format_score, format_speed_run_time} = require("../utils.js");
+const {EmbedBuilder, SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType} = require("discord.js");
+const {restrict_text, get_level, get_level_adventurer, format_score, format_speed_run_time, application_emoji_cache} = require("../utils.js");
 const head_list = require("../head_list.json");
 
 const heads_map = new Map();
@@ -71,13 +71,9 @@ async function get_ranking(interaction, client){
             await get_king(interaction, client);
             break;
         case "weekly":
-            await get_general(interaction, client, "weekly");
-            break;
         case "monthly":
-            await get_general(interaction, client, "monthly");
-            break;
         case "overall":
-            await get_general(interaction, client, "overall");
+            await get_general(interaction, client, subcommand);
             break;
         case "adventurer":
             await get_adventurer(interaction, client);
@@ -107,13 +103,15 @@ async function get_king(interaction, client){
         const data = await response.json();
 
         const embed = new EmbedBuilder();
-        embed.setTitle("👑 King Ranking 👑");
+        const crown_emoji = application_emoji_cache.get("valdorancrown") || "👑";
+        embed.setTitle(`${crown_emoji} King Ranking ${crown_emoji}`);
 
         const ranking = data?.ranking;
 
         const header_description = "You can earn reputation points by killing enemies, bosses, completing dungeons, and killing other players in the arena.\nThe new king of Valdoran will be chosen every Sunday at midnight (UTC Time) and will earn 150 diamonds, ascend the throne, wear the crown and can use the `/coin` command.\n";
         const max_items_by_pages = 7;
         const pages = new Array(Math.ceil(ranking.length / max_items_by_pages));
+        const unknown_head_emoji = application_emoji_cache.get("heads_item_0") || "👤";
 
         let current_page = -1;
         for (let i = 0; i < ranking.length; i++){
@@ -124,12 +122,12 @@ async function get_king(interaction, client){
 
             const field = ranking[i];
             const head_data = heads_map.get(parseInt(field?.skin_head, 10));
-            const emoji = new Emoji(client, parseEmoji(head_data?.emoji || "<:heads_item_0:1267602598668668949>"));
-            pages[current_page] += `${i + 1}. ${emoji} **${restrict_text(field?.nick, 20)}**#${field?.id}: \`${format_score(field?.reputation)} REP\`\n`;
+            const head_emoji = application_emoji_cache.get(head_data?.emoji) || unknown_head_emoji;
+            pages[current_page] += `${i + 1}. ${head_emoji} **${restrict_text(field?.nick, 20)}**#${field?.id}: \`${format_score(field?.reputation)} REP\`\n`;
         }
 
         current_page = 1;
-        embed.setDescription(pages[current_page - 1] || "***There are no items to display in this list at the moment...***");
+        embed.setDescription(pages[current_page - 1] || header_description + "***There are no items to display in this list at the moment...***");
 
 	    embed.addFields(
             {name: "> 🗓 __Week__", value: `> ${data?.week || "_Unknown?_"}`, inline: true},
@@ -219,21 +217,31 @@ async function get_general(interaction, client, type){
 
         switch (type){
             case "weekly":
-                embed.setTitle("🔥 Weekly Ranking 🔥");
+                const weekly_emoji = application_emoji_cache.get("item_53") || "🏆";
+                embed.setTitle(`${weekly_emoji} Weekly Ranking ${weekly_emoji}`);
                 break;
             case "monthly":
-                embed.setTitle("🔥 Monthly Ranking 🔥");
+                const monthly_emoji = application_emoji_cache.get("item_10") || "🏆";
+                embed.setTitle(`${monthly_emoji} Monthly Ranking ${monthly_emoji}`);
                 break;
             case "overall":
-                embed.setTitle("🔥 Overall Ranking (EXP) 🔥");
+                const overall_emoji = application_emoji_cache.get("item_51") || "🏆";
+                embed.setTitle(`${overall_emoji} Overall Ranking (EXP) ${overall_emoji}`);
                 break;
             default:
-                embed.setTitle("🔥 General Ranking 🔥");
+                const general_emoji = application_emoji_cache.get("valdorancrown") || "🏆";
+                embed.setTitle(`${general_emoji} General Ranking ${general_emoji}`);
         }
         
         const header_description = "";
         const max_items_by_pages = 7;
         const pages = new Array(Math.ceil(data.length / max_items_by_pages));
+        const unknown_head_emoji = application_emoji_cache.get("heads_item_0") || "👤";
+        const kills_emoji = application_emoji_cache.get("compass_item97") || "🗡️";
+        const deaths_emoji = application_emoji_cache.get("compass_item96") || "💀";
+        const coins_emoji = application_emoji_cache.get("coin") || "🪙";
+        const experience_emoji = application_emoji_cache.get("fuego") || "🔥";
+        const level_emoji = application_emoji_cache.get("compass_item121") || "🔰";
 
         let current_page = -1;
         for (let i = 0; i < data.length; i++){
@@ -244,22 +252,14 @@ async function get_general(interaction, client, type){
             
             const field = data[i];
             const head_data = heads_map.get(parseInt(field?.skin_head, 10));
-            const emoji = new Emoji(client, parseEmoji(head_data?.emoji || "<:heads_item_0:1267602598668668949>"));
+            const head_emoji = application_emoji_cache.get(head_data?.emoji) || unknown_head_emoji;
             const exp = parseInt(field?.experience, 10);
             const level = get_level(exp);
-            pages[current_page] += `${i + 1}. ${emoji} **${restrict_text(field?.nick, 20)}**: \`${format_score(field?.coins)}🪙 ${format_score(field?.kills)}🗡️ ${format_score(field?.deaths)}💀 ${format_score(field?.experience)}🛠️ ${level}💪\`\n`;
+            pages[current_page] += `${i + 1}. ${head_emoji} **${restrict_text(field?.nick, 20)}**: ${coins_emoji}\`${format_score(field?.coins)}\` ${kills_emoji}\`${format_score(field?.kills)}\` ${deaths_emoji}\`${format_score(field?.deaths)}\` ${experience_emoji}\`${format_score(field?.experience)}\` ${level_emoji}\`${level}\`\n`;
         }
 
         current_page = 1;
-        embed.setDescription(pages[current_page - 1] || "***There are no items to display in this list at the moment...***");
-
-        embed.addFields(
-            {name: "> __Coins__", value: "> 🪙", inline: true},
-            {name: "> __Kills__", value: "> 🗡️", inline: true},
-            {name: "> __Deaths__", value: "> 💀", inline: true},
-            {name: "> __Experience__", value: "> 🛠️", inline: true},
-            {name: "> __Level__", value: "> 💪", inline: true}
-        );
+        embed.setDescription(pages[current_page - 1] || header_description + "***There are no items to display in this list at the moment...***");
 
         const nb_pages = pages.length || 1;
 
@@ -347,6 +347,7 @@ async function get_adventurer(interaction, client){
         const header_description = "";
         const max_items_by_pages = 7;
         const pages = new Array(Math.ceil(data.length / max_items_by_pages));
+        const unknown_head_emoji = application_emoji_cache.get("heads_item_0") || "👤";
 
         let current_page = -1;
         for (let i = 0; i < data.length; i++){
@@ -357,9 +358,9 @@ async function get_adventurer(interaction, client){
 
             const field = data[i];
             const head_data = heads_map.get(parseInt(field?.skin_head, 10));
-            const emoji = new Emoji(client, parseEmoji(head_data?.emoji || "<:heads_item_0:1267602598668668949>"));
+            const head_emoji = application_emoji_cache.get(head_data?.emoji) || unknown_head_emoji;
             const level = get_level_adventurer(field?.score);
-            pages[current_page] += `${i + 1}. ${emoji} **${restrict_text(field?.nick, 20)}**#${field?.id}: \`${format_score(field?.score)} EXP (${level} LVL)\`\n`;
+            pages[current_page] += `${i + 1}. ${head_emoji} **${restrict_text(field?.nick, 20)}**#${field?.id}: \`${format_score(field?.score)} EXP (${level} LVL)\`\n`;
         }
 
         current_page = 1;
@@ -446,11 +447,13 @@ async function get_relic_hunter(interaction, client){
 
         const embed = new EmbedBuilder();
 
-        embed.setTitle("🏺 Relic Hunter Ranking 🏺");
+        const relic_hunter_emoji = application_emoji_cache.get("item_809") || "🎒";
+        embed.setTitle(`${relic_hunter_emoji} Relic Hunter Ranking ${relic_hunter_emoji}`);
 
         const header_description = "";
         const max_items_by_pages = 7;
         const pages = new Array(Math.ceil(data.length / max_items_by_pages));
+        const unknown_head_emoji = application_emoji_cache.get("heads_item_0") || "👤";
 
         let current_page = -1;
         for (let i = 0; i < data.length; i++){
@@ -461,13 +464,13 @@ async function get_relic_hunter(interaction, client){
 
             const field = data[i];
             const head_data = heads_map.get(parseInt(field?.skin_head, 10));
-            const emoji = new Emoji(client, parseEmoji(head_data?.emoji || "<:heads_item_0:1267602598668668949>"));
+            const head_emoji = application_emoji_cache.get(head_data?.emoji) || unknown_head_emoji;
             const level = get_level_adventurer(field?.score);
-            pages[current_page] += `${i + 1}. ${emoji} **${restrict_text(field?.nick, 20)}**#${field?.id}: \`${format_score(field?.score)} EXP (${level} LVL)\`\n`;
+            pages[current_page] += `${i + 1}. ${head_emoji} **${restrict_text(field?.nick, 20)}**#${field?.id}: \`${format_score(field?.score)} EXP (${level} LVL)\`\n`;
         }
 
         current_page = 1;
-        embed.setDescription(pages[current_page - 1] || "***There are no items to display in this list at the moment...***");
+        embed.setDescription(pages[current_page - 1] || header_description + "***There are no items to display in this list at the moment...***");
 
         const nb_pages = pages.length || 1;
 
@@ -559,7 +562,8 @@ async function get_speedrun(interaction, client){
         const header_description = "Do you also want to be included in the leaderboard?\nUse the \`/speedrun\` command on GoBattle.io to start a speedrun session and try to do better than the others!\n";
         const max_items_by_pages = 7;
         const pages = new Array(Math.ceil(ranking.length / max_items_by_pages));
-        
+        const unknown_head_emoji = application_emoji_cache.get("heads_item_0") || "👤";
+
         const list_size = ranking.length;
         let current_page = -1;
         for (let i = 0; i < list_size; i++){
@@ -570,13 +574,13 @@ async function get_speedrun(interaction, client){
 
             const field = ranking[i];
             const head_data = heads_map.get(parseInt(field?.skin_head, 10));
-            const emoji = new Emoji(client, parseEmoji(head_data?.emoji || "<:heads_item_0:1267602598668668949>"));
+            const head_emoji = application_emoji_cache.get(head_data?.emoji) || unknown_head_emoji;
             const time = format_speed_run_time(field?.time);
-            pages[current_page] += `${field?.rank}. ${emoji} **${restrict_text(field?.nick, 20)}**#${field?.id}: \`${time}\`\n`;
+            pages[current_page] += `${field?.rank}. ${head_emoji} **${restrict_text(field?.nick, 20)}**#${field?.id}: \`${time}\`\n`;
         }
 
         current_page = 1;
-        embed.setDescription(pages[current_page - 1] || "***There are no items to display in this list at the moment...***");
+        embed.setDescription(pages[current_page - 1] || header_description + "***There are no items to display in this list at the moment...***");
 
         embed.addFields(
             {name: "> 🏰 __Dungeon name__", value: `> **${data.name || "_Unknown?_"}**`, inline: true},

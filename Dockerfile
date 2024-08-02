@@ -1,5 +1,5 @@
 # Nodejs
-FROM node:22
+FROM node:22.5.1
 
 WORKDIR /app
 
@@ -13,4 +13,4 @@ RUN npm install --build-from-source
 
 COPY . .
 
-CMD ["node", "--env-file=.env", "./src/index.js"]
+CMD ["npm", "start"]

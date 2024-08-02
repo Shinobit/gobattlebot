@@ -4,6 +4,7 @@
   "description": "I am a Bot capable of giving you useful information about the MMORPG GoBattle.io.",
   "main": "./src/index.js",
   "scripts": {
+    "start": "node --env-file=.env --experimental-sqlite ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

@@ -51,7 +51,7 @@ async function get_list(interaction, _client){
     const embed = new EmbedBuilder();
     embed.setTitle("🏰 Dungeon List 🏰");
 
-    const header_description = "Note that this list is not updated in real time like other lists. This is a pre-list awaiting the GoBattle.io API update.\n";
+    const header_description = "Note that this list is not updated in real time unlike other lists. This is a pre-list awaiting the GoBattle.io API update.\n";
     const max_items_by_pages = 7;
     const pages = new Array(Math.ceil(dungeon_list.length / max_items_by_pages));
 

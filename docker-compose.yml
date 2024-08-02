@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   bot:
@@ -8,5 +8,5 @@ services:
       - .env
     volumes:
       - .:/app
-    command: ["node", "--env-file=.env", "./src/index.js"]
+    command: ["npm", "start"]
     restart: unless-stopped

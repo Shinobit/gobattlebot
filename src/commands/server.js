@@ -99,7 +99,7 @@ async function get_list(interaction, client){
         }
 
         current_page = 1;
-        embed.setDescription(pages[current_page - 1] || "***There are no items to display in this list at the moment...***");
+        embed.setDescription(pages[current_page - 1] || header_description + "***There are no items to display in this list at the moment...***");
 
         embed.addFields(
             {name: "> 🎮 __Platform__", value: `> ${platform}`, inline: true},

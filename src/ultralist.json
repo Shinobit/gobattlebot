@@ -10,7 +10,7 @@
             "uses": 3,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_506:1267561503029067847>"
+            "emoji": "item_506"
         },
         {
             "name": "Gobattle Ring",
@@ -21,7 +21,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_512:1267561027055128599>"
+            "emoji": "item_512"
         },
         {
             "name": "Firebreath Ring",
@@ -32,7 +32,7 @@
             "uses": 10,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_502:1267561518808039454>"
+            "emoji": "item_502"
         },
         {
             "name": "Blue Ring",
@@ -43,7 +43,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_520:1267561452672122972>"
+            "emoji": "item_520"
         },
         {
             "name": "Red Ring",
@@ -54,7 +54,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_515:1267561468811935774>"
+            "emoji": "item_515"
         },
         {
             "name": "Bloodmoon Ring",
@@ -65,7 +65,7 @@
             "uses": 3,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_510:1267561480509718548>"
+            "emoji": "item_510"
         },
         {
             "name": "Anti Freezing Glove",
@@ -76,7 +76,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_431:1267569371455160390>"
+            "emoji": "item_431"
         },
         {
             "name": "Instant Strength Glove",
@@ -87,7 +87,7 @@
             "uses": 7,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_435:1267569402941800468>"
+            "emoji": "item_435"
         },
         {
             "name": "Epic Strength Glove",
@@ -98,7 +98,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_441:1267569470382149804>"
+            "emoji": "item_441"
         },
         {
             "name": "Gravity Feather",
@@ -109,7 +109,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_754:1267573693458944010>"
+            "emoji": "item_754"
         },
         {
             "name": "Team Gravity Feather",
@@ -120,7 +120,7 @@
             "uses": 3,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_749:1267561874350805043>"
+            "emoji": "item_749"
         },
         {
             "name": "Hermes Boots",
@@ -131,7 +131,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_133:1267565695907139708>"
+            "emoji": "item_133"
         },
         {
             "name": "Speed Boots",
@@ -142,7 +142,7 @@
             "uses": 7,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_139:1267565745345134662>"
+            "emoji": "item_139"
         },
         {
             "name": "Maximum Speed Boots",
@@ -153,7 +153,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_140:1267565753297666099>"
+            "emoji": "item_140"
         },
         {
             "name": "Normal Invisibility Cloak",
@@ -164,7 +164,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_235:1267564036426436791>"
+            "emoji": "item_235"
         },
         {
             "name": "Extreme Invisibility Cloak",
@@ -175,7 +175,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_264:1267564565525299301>"
+            "emoji": "item_264"
         },
         {
             "name": "Instant Defense Cloak",
@@ -186,7 +186,7 @@
             "uses": 7,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_236:1267564043107827744>"
+            "emoji": "item_236"
         },
         {
             "name": "Epic Instant Defense Cloak",
@@ -197,7 +197,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_262:1267564548672721007>"
+            "emoji": "item_262"
         },
         {
             "name": "Normal Health Regeneration Cloak",
@@ -208,7 +208,7 @@
             "uses": 7,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_240:1267564050737532929>"
+            "emoji": "item_240"
         },
         {
             "name": "Maximum Health Regeneration Cloak",
@@ -219,7 +219,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_260:1267564530196680795>"
+            "emoji": "item_260"
         },
         {
             "name": "Normal Venom Protection Cloak",
@@ -230,7 +230,7 @@
             "uses": 7,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_242:1267564066763706419>"
+            "emoji": "item_242"
         },
         {
             "name": "Extreme Venom Protection Cloak",
@@ -241,7 +241,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_261:1267564540917186580>"
+            "emoji": "item_261"
         },
         {
             "name": "Maximum Fire Protection Cloak",
@@ -252,7 +252,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_268:1267564588644307005>"
+            "emoji": "item_268"
         },
         {
             "name": "Fire Protection Cloak",
@@ -263,7 +263,7 @@
             "uses": 7,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_249:1267564125827895436>"
+            "emoji": "item_249"
         },
         {
             "name": "Breath Helmet",
@@ -274,7 +274,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": null,
-            "emoji": "<:item_267:1267564398747320432>"
+            "emoji": "item_267"
         },
         {
             "name": "Lava Armor Protector",
@@ -285,7 +285,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_251:1267568057325322321>"
+            "emoji": "item_251"
         },
         {
             "name": "Anti Fire Enchantment",
@@ -296,7 +296,7 @@
             "uses": 5,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_388:1267565242775371887>"
+            "emoji": "item_388"
         },
         {
             "name": "Epic Invicibility Potion",
@@ -307,7 +307,7 @@
             "uses": 1,
             "is_relic": false,
             "max_in_inventory": null,
-            "emoji": "<:item_551:1267570796818206902>"
+            "emoji": "item_551"
         },
         {
             "name": "Firebreath's Blood",
@@ -318,7 +318,7 @@
             "uses": 1,
             "is_relic": false,
             "max_in_inventory": null,
-            "emoji": "<:item_745:1267573567013519401>"
+            "emoji": "item_745"
         },
         {
             "name": "Special Halloween Broom",
@@ -329,7 +329,7 @@
             "uses": 1,
             "is_relic": false,
             "max_in_inventory": null,
-            "emoji": "<:item_761:1267573805639929936>"
+            "emoji": "item_761"
         },
         {
             "name": "Sleigh Enchantment",
@@ -340,7 +340,7 @@
             "uses": 1,
             "is_relic": false,
             "max_in_inventory": null,
-            "emoji": "<:item_395:1267569075194953868>"
+            "emoji": "item_395"
         },
         {
             "name": "Special Christmas Hat",
@@ -351,7 +351,7 @@
             "uses": 1,
             "is_relic": false,
             "max_in_inventory": null,
-            "emoji": "<:item_764:1267563728409333873>"
+            "emoji": "item_764"
         },
         {
             "name": "Peppermint Strike",
@@ -362,7 +362,7 @@
             "uses": 3,
             "is_relic": false,
             "max_in_inventory": 1,
-            "emoji": "<:item_801:1267574341202088118>"
+            "emoji": "item_801"
         },
         {
             "name": "Dice of Destiny",
@@ -370,10 +370,10 @@
             "drops": null,
             "id": 182,
             "description": "Increases your luck 1%",
-            "uses": null,
+            "uses": -1,
             "is_relic": true,
             "max_in_inventory": 16,
-            "emoji": "<:item_810:1267563864900239381>"
+            "emoji": "item_810"
         },
         {
             "name": "Iron Heart",
@@ -381,10 +381,10 @@
             "drops": null,
             "id": 183,
             "description": "Increases max health 2%",
-            "uses": null,
+            "uses": -1,
             "is_relic": true,
             "max_in_inventory": null,
-            "emoji": "<:item_811:1267563849608069120>"
+            "emoji": "item_811"
         },
         {
             "name": "Rejuvenation Gem",
@@ -392,10 +392,10 @@
             "drops": null,
             "id": 184,
             "description": "Increases regeneration 2%",
-            "uses": null,
+            "uses": -1,
             "is_relic": true,
             "max_in_inventory": null,
-            "emoji": "<:item_812:1267563856541126686>"
+            "emoji": "item_812"
         },
         {
             "name": "Inferno Touch",
@@ -403,10 +403,10 @@
             "drops": null,
             "id": 185,
             "description": "1% chance of burning effect (PVP)",
-            "uses": null,
+            "uses": -1,
             "is_relic": true,
             "max_in_inventory": null,
-            "emoji": "<:item_813:1267563837427552337>"
+            "emoji": "item_813"
         },
         {
             "name": "Greed's Grip",
@@ -414,10 +414,10 @@
             "drops": null,
             "id": 186,
             "description": "Attract coins close to you",
-            "uses": null,
+            "uses": -1,
             "is_relic": true,
             "max_in_inventory": null,
-            "emoji": "<:item_814:1267574519376384122>"
+            "emoji": "item_814"
         },
         {
             "name": "Dwarf's Strength",
@@ -425,10 +425,10 @@
             "drops": null,
             "id": 187,
             "description": "Increases reach of Axes 8%",
-            "uses": null,
+            "uses": -1,
             "is_relic": true,
             "max_in_inventory": 16,
-            "emoji": "<:item_815:1267574531015573524>"
+            "emoji": "item_815"
         },
         {
             "name": "Talisman of the Phoenix",
@@ -436,10 +436,10 @@
             "drops": null,
             "id": 161,
             "description": null,
-            "uses": null,
+            "uses": -1,
             "is_relic": true,
             "max_in_inventory": null,
-            "emoji": "<:item_798:1267574301750722651>"
+            "emoji": "item_798"
         },
         {
             "name": "Flying Skill",
@@ -447,10 +447,10 @@
             "drops": null,
             "id": 198,
             "description": "Gives you the skill to dash vertically with your wings",
-            "uses": null,
+            "uses": -1,
             "is_relic": true,
             "max_in_inventory": 1,
-            "emoji": "<:item_820:1267560357895868529>"
+            "emoji": "item_820"
         },
         {
             "name": "Dodge Charm",
@@ -458,10 +458,10 @@
             "drops": "All",
             "id": 189,
             "description": "1% chance of dodging any attack",
-            "uses": null,
+            "uses": -1,
             "is_relic": true,
             "max_in_inventory": 1,
-            "emoji": "<:item_817:1267574569955233802>"
+            "emoji": "item_817"
         },
         {
             "name": "Gem Dust",
@@ -469,10 +469,10 @@
             "drops": "Stahmite Mines",
             "id": 191,
             "description": "Up to 5 dyams (+ Luck) per gem in chests",
-            "uses": null,
+            "uses": -1,
             "is_relic": true,
             "max_in_inventory": 25,
-            "emoji": "<:item_819:1267560608186761359>"
+            "emoji": "item_819"
         }
     ]
 }

@@ -26,7 +26,7 @@ sudo apt install -y npm
 node -v
 npm -v
 ```
-  ⚠️ Note that the minimum node js version for the project must be v20. ⚠️
+  ⚠️ Note that the minimum node js version for the project must be v22.5.0. ⚠️
 
 3. Install dependencies:
 ```bash
@@ -34,6 +34,10 @@ npm install
 ```
 
 4. Start the bot.
+```bash
+npm start
+```
+OR
 ```bash
 node --env-file=.env ./src/index.js
 ```

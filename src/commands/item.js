@@ -1,6 +1,6 @@
-const {SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType, Emoji, parseEmoji} = require("discord.js");
+const {SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType} = require("discord.js");
 const {ultra_list} = require("../ultralist.json");
-const {restrict_text, sum, format_score} = require("../utils.js");
+const {restrict_text, sum, format_score, format_score_with_commas, application_emoji_cache} = require("../utils.js");
 
 const items_map = new Map();
 for (const item_data of ultra_list){
@@ -70,10 +70,14 @@ async function get_info(interaction, client){
             return;
         }
 
-        const emoji = new Emoji(client, parseEmoji(item_info?.emoji || "<:item_91:1267565851536789554>"));
+        const unknown_item_emoji = application_emoji_cache.get("item_91") || "📦";
+        const item_emoji = application_emoji_cache.get(item_info?.emoji) || unknown_item_emoji;
+
         const embed = new EmbedBuilder();
-        embed.setTitle(`${emoji} ${restrict_text(item_info.name, 60)}`);
-        embed.setThumbnail(emoji.imageURL());
+        embed.setTitle(`${item_emoji} ${restrict_text(item_info.name, 60)}`);
+        if (typeof item_emoji != "string"){
+            embed.setThumbnail(item_emoji.imageURL());
+        }
         embed.setDescription(item_info.description ? restrict_text(item_info.description, 250) : "_Description Unknown_");
         embed.setColor(0x500000);
         embed.addFields(
@@ -131,10 +135,12 @@ async function get_ultrarare_drops(interaction, client){
 
         embed.setTitle("Current average chance of getting an Ultrarare from a chest.");
 
-        const chest_emoji = new Emoji(client, parseEmoji("<:item_760:1267561884610203650>"));
-        const header_description = `Results are calculated based on ${total} samples (*chest opened by players ${chest_emoji}*) including ${total_ultrarare} ultrarare drops.\n`;
+        const chest_emoji = application_emoji_cache.get("item_760") || "🧰";
+        const total_ultrarare_formatted = format_score_with_commas(total_ultrarare);
+        const header_description = `Results are calculated based on **${format_score_with_commas(total)}** samples (*chest opened by players ${chest_emoji}*) including **${total_ultrarare_formatted}** ultrarare drops.\n`;
         const max_items_by_pages = 7;
         const pages = new Array(Math.ceil(values.length / max_items_by_pages));
+        const unknown_item_emoji = application_emoji_cache.get("item_91") || "📦";
 
         const drops_entries = Object.entries(drops);
 
@@ -147,16 +153,16 @@ async function get_ultrarare_drops(interaction, client){
 
             const [key, value] = drops_entries[i];
             const ultra_info = items_map.get(parseInt(key, 10));
-            const emoji = new Emoji(client, parseEmoji(ultra_info?.emoji || "<:item_91:1267565851536789554>"));
-            pages[current_page] += `* ${emoji} **${restrict_text(ultra_info?.name || "*Unknow?*", 45)}**#${key}: \`${format_score(value)} (${(value / total_ultrarare * 100).toPrecision(2)}%)\`\n`;
+            const item_emoji = application_emoji_cache.get(ultra_info?.emoji) || unknown_item_emoji;
+            pages[current_page] += `* ${item_emoji} **${restrict_text(ultra_info?.name || "*Unknow?*", 45)}**#${key}: \`${format_score(value)} (${(value / total_ultrarare * 100).toPrecision(2)}%)\`\n`;
         }
 
         current_page = 1;
         embed.setDescription(pages[current_page - 1] || "***There are no items to display in this list at the moment...***");
 
         embed.addFields(
-            {name: "> 🌟 __Ultrarare__", value: `> ${(drops_ratio * 100).toPrecision(2)}%`, inline: true},
-            {name: "> 📦 __Other__", value: `> ${((1 - drops_ratio) * 100).toPrecision(2)}%`, inline: true}
+            {name: "> 🌟 __Ultrarare__", value: `> ${total_ultrarare_formatted} (${(drops_ratio * 100).toPrecision(2)}%)`, inline: true},
+            {name: `> ${unknown_item_emoji} __Other__`, value: `> ${format_score_with_commas(total - total_ultrarare)} (${((1 - drops_ratio) * 100).toPrecision(2)}%)`, inline: true}
         );
 
         const nb_pages = pages.length || 1;

@@ -1,4 +1,7 @@
-const {ChannelType, PermissionFlagsBits, User, Team} = require("discord.js");
+const {ChannelType, PermissionFlagsBits, User, Team, Emoji} = require("discord.js");
+const level_emojis = require("./level_emojis.json");
+
+const application_emoji_cache = new Map();
 
 function restrict_text(str, nb){
     if (str.length > nb){
@@ -31,6 +34,19 @@ function format_score(score){
     return score_formated;
 }
 
+function format_score_with_commas(score){
+    const score_string = score.toString();
+    let score_formated = "";
+    for (let i = score_string.length - 1, count = 0; i >= 0; i--, count++){
+        if (count && count % 3 === 0){
+            score_formated = "," + score_formated;
+        }
+        score_formated = score_string[i] + score_formated;
+    }
+    
+    return score_formated;
+}
+
 function format_speed_run_time(time){
     const total_milliseconds = Math.floor(time * 1000);
 
@@ -51,6 +67,24 @@ function get_level(exp){
 
 function get_level_adventurer(experience){
     return Math.min(20, Math.floor(Math.pow(experience / 100, 1 / 3)) + 1);
+}
+
+function get_level_to_emojis(level){
+    level = Math.floor(level);
+
+    let emojis = "";
+
+    const landing = Math.floor(level / level_emojis.length);
+    for (let i = 0; i < landing; i++){
+        emojis += application_emoji_cache.get(level_emojis.at(-1)).toString();
+    }
+
+    const rest = level % level_emojis.length;
+    if (rest){
+        emojis += application_emoji_cache.get(level_emojis[rest - 1]).toString();
+    }
+
+    return emojis;
 }
 
 function get_utc_date(){
@@ -104,7 +138,7 @@ function is_my_developer(client, user){
         let is_member = false;
 
         const members_id = client.application.owner.members.keys();
-
+        
         for (const user_id of members_id){
             is_member = user_id == user.id;
 
@@ -117,14 +151,39 @@ function is_my_developer(client, user){
     return false;
 }
 
+async function update_application_emoji_cache(application){
+    const api_version = 10;
+    const headers = {
+        "Authorization": `Bot ${application.client.token}`
+    };
+
+    const response = await fetch(`https://discord.com/api/v${api_version}/applications/${application.id}/emojis`, {method: "GET", headers: headers});
+    if (!response.ok){
+        return;
+    }
+
+    const data = await response.json();
+    application_emoji_cache.clear();
+    for (const item of data.items){
+        const emoji = new Emoji(application.client, item);
+        application_emoji_cache.set(emoji.name, emoji);
+    }
+
+    return application_emoji_cache;
+}
+
 exports.restrict_text = restrict_text;
 exports.format_score = format_score;
+exports.format_score_with_commas = format_score_with_commas;
 exports.format_speed_run_time = format_speed_run_time;
 exports.get_level = get_level;
 exports.get_level_adventurer = get_level_adventurer;
+exports.get_level_to_emojis = get_level_to_emojis;
 exports.get_utc_date = get_utc_date;
 exports.get_utf_time_next_king = get_utf_time_next_king;
 exports.sum = sum;
 exports.send_echo = send_echo;
 exports.get_first_chat_channel = get_first_chat_channel;
 exports.is_my_developer = is_my_developer;
+exports.update_application_emoji_cache = update_application_emoji_cache;
+exports.application_emoji_cache = application_emoji_cache;

@@ -1,6 +1,6 @@
-const {Client, Partials, IntentsBitField, Routes, ActivityType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, TextInputBuilder} = require("discord.js");
-const {get_first_chat_channel, is_my_developer, restrict_text} = require("./utils.js");
-const {ultra_list} = require("./ultralist.json");
+const {Client, Events, Partials, IntentsBitField, Routes, ActivityType} = require("discord.js");
+const {get_first_chat_channel, is_my_developer, update_application_emoji_cache, get_level_to_emojis, application_emoji_cache} = require("./utils.js");
+const database = require("./database/database.js");
 
 const {get_ranking, ranking_command} = require("./commands/ranking.js");
 const {get_help, help_command} = require("./commands/help.js");
@@ -52,12 +52,15 @@ const client = new Client({
 client.login(process.env.TOKEN);
 
 client.on("ready", async (event) => {
+    database.init();
+
     console.log(`${event.user.tag} ready.`);
 
     client.user.setActivity("GoBattle.io", {type: ActivityType.Playing});
 
     await client.application.fetch();
-
+    await update_application_emoji_cache(client.application);
+    
     try{
         await client.rest.put(
             Routes.applicationCommands(client.user.id),
@@ -78,28 +81,9 @@ client.on("ready", async (event) => {
             console.error(error);
         }
     }
-
-
-    //test
-    /*const guild = await client.guilds.fetch("380588354934276097");
-    
-    guild.channels.cache.forEach((channel) => {
-        if (channel.type == 0){
-        console.log(`${channel.name} (${channel.type}) - ${channel.id}`);
-        }
-      });
-
-      const gg = await client.channels.fetch("1148723323761606809");
-      
-      gg.messages.fetch({limit: 100}).then(messages => {
-        console.log(`Received ${messages.size} messages`);
-        //Iterate through the messages here with the variable "messages".
-        messages.forEach(message => console.log(message.author.globalName, ": ", message.content))
-      })
-*/
 });
 
-client.on("guildCreate", async (guild) => {
+client.on(Events.GuildCreate, async (guild) => {
     try {
         const channel = get_first_chat_channel(guild, client);
 
@@ -111,82 +95,130 @@ client.on("guildCreate", async (guild) => {
     }
 });
 
-client.on("interactionCreate", async (interaction) => {
-    if (interaction.isButton()){
-        return;
-    }
-
-    if (!interaction.isChatInputCommand()){
-        return;
-    }
-
+client.on(Events.InteractionCreate, async (interaction) => {
     try{
-        switch (interaction.commandName){
-            case "item":
-                await get_item(interaction, client);
-                break;
-            case "user":
-                await get_user(interaction, client);
-                break;
-            case "server":
-                await get_server(interaction, client);
-                break;
-            case "ranking":
-                await get_ranking(interaction, client);
-                break;
-            case "get_date_new_king":
-                await get_date_new_king(interaction, client);
-                break;
-            case "info":
-                await get_info(interaction, client);
-                break;
-            case "help":
-                await get_help(interaction, client);
-                break;
-            case "ping":
-                await get_ping(interaction, client);
-                break;
-            case "leave":
-                await get_leave(interaction, client);
-                break;
-            case "asset":
-                await get_asset(interaction, client);
-                break;
-            case "dungeon":
-                await get_dungeon(interaction, client);
-                break;
-            case "setting":
-                await get_setting(interaction, client);
-                break;
-            case "echo":
-                await get_echo(interaction, client);
-                break;
-            case "get_ultrarare_drop_chance":
-                await get_ultrarare_drop_chance(interaction, client);
-                break;
-            default:
-                await interaction.reply({content: "This command no longer exists.", ephemeral: true});
+        if (interaction.isChatInputCommand()){
+            switch (interaction.commandName){
+                case "item":
+                    await get_item(interaction, client);
+                    break;
+                case "user":
+                    await get_user(interaction, client);
+                    break;
+                case "server":
+                    await get_server(interaction, client);
+                    break;
+                case "ranking":
+                    await get_ranking(interaction, client);
+                    break;
+                case "get_date_new_king":
+                    await get_date_new_king(interaction, client);
+                    break;
+                case "info":
+                    await get_info(interaction, client);
+                    break;
+                case "help":
+                    await get_help(interaction, client);
+                    break;
+                case "ping":
+                    await get_ping(interaction, client);
+                    break;
+                case "leave":
+                    await get_leave(interaction, client);
+                    break;
+                case "asset":
+                    await get_asset(interaction, client);
+                    break;
+                case "dungeon":
+                    await get_dungeon(interaction, client);
+                    break;
+                case "setting":
+                    await get_setting(interaction, client);
+                    break;
+                case "echo":
+                    await get_echo(interaction, client);
+                    break;
+                case "get_ultrarare_drop_chance":
+                    await get_ultrarare_drop_chance(interaction, client);
+                    break;
+                default:
+                    await interaction.reply({content: "This command no longer exists.", ephemeral: true});
+            }
+        }else if (interaction.isModalSubmit()){
+            switch (interaction.customId){
+                case "login":
+                    try{
+                        await interaction.deferReply({ephemeral: true});
+
+                        const email = interaction.fields.getTextInputValue("email");
+                        const password = interaction.fields.getTextInputValue("password");
+
+                        const platform = "Web";
+                        const request_info = {
+                            method: "POST",
+                            headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            },
+                            body: new URLSearchParams({
+                                "email": email,
+                                "password": password
+                            })
+                        };
+
+                        const response = await fetch(`https://gobattle.io/api.php/login?platform=${platform}&ud=`, request_info);
+                        const data = await response.json();
+
+                        if (!response.ok){
+                            if (data?.error == "Invalid credentials"){
+                                await interaction.editReply("# ⚠️ Login error\nThe email or the passworld are incorrect.");
+                                return;
+                            }
+
+                            await interaction.editReply(`Impossible to connect. There is a problem with the GoBattle API.\nContact ${client.application.owner} to resolve this issue.`);
+                            return;
+                        }
+
+                        const success = database.add_gobattle_accesse(interaction.user, data.id, data.token);
+                        if (success){
+                            interaction.editReply("Your account has been successfully registered. You can log out at any time with `/user logout`.");
+                        }else{
+                            interaction.editReply("Your account is already registered. You can log out at any time with `/user logout`.");
+                        }
+
+                        /*
+                        https://gobattle.io/api.php/recover?platform=Web&ud=
+                        application/x-www-form-urlencoded
+                        post email: sammarzin22@gmail.com
+                        {id: "703", email: "sammarzin22@gmail.com"}
+                        */
+                    }catch (error){
+                        await interaction.editReply(`An internal error has occurred...\nContact ${client.application.owner} to resolve this issue.`);
+                        console.error(error);
+                    }
+                    break;
+                case "recover":
+                    await interaction.reply({content: "Interaction not supported at this time.", ephemeral: true});
+                    break;
+                default:
+                    await interaction.reply({content: "The form submission was not processed successfully because I am not familiar with the form.", ephemeral: true});
+            }
         }
     }catch (error){
-        console.error("Impossible to answer:", error);
+        console.error(error);
     }
 });
 
-client.on("messageCreate", async (msg) => {
+client.on(Events.MessageCreate, async (msg) => {
     if (msg.author.bot){
         return;
     }
 
     try{
-        /*
-        if (msg.guildId == "1235330175449825310"){
-            const gg = await client.channels.fetch("380588355403907082");
-            await gg.send("Kuwazy told me to send you this message:\n" + msg.content);
-        }
-        */
-        const command = msg.content.trim().toLowerCase();
+        const command_info = msg.content.trim().split(" ");
+        const command = command_info[0].toLowerCase();
 
         // Quick commands for development.
+        let content = "";
         switch (command){
             case "!gb_bot_guilds":
                 if (!is_my_developer(client, msg.author)){
@@ -195,12 +227,12 @@ client.on("messageCreate", async (msg) => {
                 }
 
                 const guilds = client.guilds.cache;
-                let message = "# List of guilds I am in:\n\n";
+                content = "# List of guilds I am in:\n\n";
                 for (const guild of guilds.values()){
-                    message += `* ${guild.name}: \`${guild.id}\`,\n`;
+                    content += `* ${guild.name}: \`${guild.id}\`,\n`;
                 }
-                message += `(${guilds.size} Guilds)`;
-                await msg.reply(message);
+                content += `(${guilds.size} Guilds)`;
+                await msg.reply(content);
                 
                 break;
             case "!get_off_this_server":
@@ -209,12 +241,38 @@ client.on("messageCreate", async (msg) => {
                     return;
                 }
 
-                await msg.reply("Well, I'm leaving this guild because I seem to be disturbing... STFU.");
+                await msg.reply("Well, I'm leaving this guild because I seem to be disturbing...");
                 await msg.guild.leave();
                 
                 break;
+            case "!gb_emoji":
+                if (!is_my_developer(client, msg.author)){
+                    await msg.reply("You do not have permission to use this command.");
+                    return;
+                }
+
+                const nb_emoji = 60;
+                for (let i = 0; i < nb_emoji; i++){
+                    const emojis = Array.from(application_emoji_cache.values());
+                    const index = Math.floor(Math.random() * emojis.length); 
+
+                    content += `${emojis[index]}`;
+                }
+                await msg.reply(content);
+                
+                break;
+            case "!gb_level_to_emojis":
+                if (!is_my_developer(client, msg.author)){
+                    await msg.reply("You do not have permission to use this command.");
+                    return;
+                }
+
+                const level = parseInt(command_info[1] || 0, 10);
+                await msg.reply(`Level ${level} is: (${get_level_to_emojis(level)})`);
+
+                break;
         }
     }catch (error){
-        console.error("Impossible to answer:", error);
+        console.error(error);
     }
 });
