@@ -227,6 +227,12 @@ async function get_friend(interaction, client){
 }
 
 async function get_login(interaction, client){
+    const gobattle_user_id = database.discord_user_to_gobattle_user_id(interaction.user);
+    if (gobattle_user_id){
+        interaction.reply({content: `You are already using user account _#${gobattle_user_id}_. Use the \`/user logout\` command before registering another account.`, ephemeral: true});
+        return;
+    }
+
     const modal = new ModalBuilder();
 	modal.setCustomId("login");
 	modal.setTitle("Login to Gobattle account.");
@@ -437,7 +443,7 @@ async function get_friend_pending_count(interaction, client){
 async function get_friend_pending_requests(interaction, client, type){
     const user_id = interaction.options.get("user_id")?.value;
 
-    const public = type != "incoming" || database.gobattle_user_id_to_discord_user_id(user_id)?.toString() == interaction.user.id;
+    const public = type != "incoming" || database.gobattle_user_id_to_discord_user_id(user_id)?.toString() == interaction.user.id || is_my_developer(client, interaction.user);
     await interaction.deferReply({ephemeral: public});
 
     const gobattle_token = database.get_gobattle_token_by_gobattle_id(user_id);
@@ -555,7 +561,7 @@ async function get_friend_pending_requests(interaction, client, type){
 
 async function get_friend_list(interaction, client){
     const user_id = interaction.options.get("user_id")?.value;
-    const public = database.gobattle_user_id_to_discord_user_id(user_id)?.toString() == interaction.user.id;
+    const public = database.gobattle_user_id_to_discord_user_id(user_id)?.toString() == interaction.user.id || is_my_developer(client, interaction.user);
 
     await interaction.deferReply({ephemeral: public});
 
