@@ -7,7 +7,7 @@ The door is open to all potential contributors. The project is now managed by Sh
 
 ## Configuration and prerequisites
 - You must have a Discord app that you have previously created in the Discord Developer Portal.
-- You also need to have nodejs v20 or higher installed on your server.
+- You also need to have nodejs v22 or higher installed on your server.
 - You must have the application token and configure the `.env` file accordingly.
 
 ## To start the project, open a terminal at the root of the project and use the following commands:
