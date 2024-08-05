@@ -1,4 +1,4 @@
-const {ChannelType, PermissionFlagsBits, User, Team, Emoji} = require("discord.js");
+const {ChannelType, PermissionFlagsBits, User, Team, Emoji, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType} = require("discord.js");
 const level_emojis = require("./level_emojis.json");
 
 const application_emoji_cache = new Map();
@@ -111,8 +111,11 @@ function sum(array){
 }
 
 function get_first_chat_channel(guild, client){
+    const everyone = guild.roles.everyone;
     return guild.channels.cache.find((channel) => {
-        return channel.type == ChannelType.GuildText && channel.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages);
+        return channel.type == ChannelType.GuildText &&
+        channel.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages) &&
+        channel.permissionsFor(everyone).has(PermissionFlagsBits.ViewChannel);
     });
 }
 
@@ -172,6 +175,77 @@ async function update_application_emoji_cache(application){
     return application_emoji_cache;
 }
 
+async function send_embed_layout(interaction, embed, pages, header_description = "", content_message){
+    let current_page = 1;
+
+    if (header_description){
+        header_description += "\n";
+    }
+    
+    embed.setDescription(header_description + (pages[current_page - 1] || "***There are no items to display on this page at the moment...***"));
+
+    const nb_pages = pages.length || 1;
+
+    embed.setFooter({text: `Page ${current_page}/${nb_pages}`});
+
+    const previous_button = new ButtonBuilder();
+    previous_button.setCustomId("previous");
+    previous_button.setEmoji("◀️");
+    previous_button.setStyle(ButtonStyle.Primary);
+    previous_button.setDisabled(current_page == 1);
+
+    const next_button = new ButtonBuilder();
+    next_button.setCustomId("next");
+    next_button.setEmoji("▶️");
+    next_button.setStyle(ButtonStyle.Primary);
+    next_button.setDisabled(current_page == nb_pages);
+
+    const row = new ActionRowBuilder();
+    row.addComponents(previous_button, next_button);
+
+    const response_interaction = await interaction.editReply({
+        content: content_message,
+        embeds: [embed],
+        components: [row]
+    });
+
+    function collector_filter(m){
+        const result = m.user.id == interaction.user.id;
+    
+        if (!result){
+            m.reply({content: "You cannot interact with a command that you did not initiate yourself.", ephemeral: true}).catch((error) => {
+                console.error(error);
+            });
+        }
+    
+        return result;
+    }
+
+    async function button_interaction_logic(response_interaction){
+        try{
+            const confirmation = await response_interaction.awaitMessageComponent({filter: collector_filter, componentType: ComponentType.Button, time: 60_000});
+
+            if (confirmation.customId === "previous"){
+                current_page--;
+            } else if (confirmation.customId === "next"){
+                current_page++;
+            }
+
+            embed.setDescription(header_description + pages[current_page - 1]);
+            embed.setFooter({text: `Page ${current_page}/${nb_pages}`});
+            previous_button.setDisabled(current_page == 1);
+            next_button.setDisabled(current_page == nb_pages);
+
+            response_interaction = await confirmation.update({embeds: [embed], components: [row]});
+            await button_interaction_logic(response_interaction);
+        }catch (_error){
+            await interaction.editReply({content: "-# ⓘ This interaction has expired, please use the command again to be able to navigate the list.", components: []});
+        }
+    }
+
+    await button_interaction_logic(response_interaction);
+}
+
 exports.restrict_text = restrict_text;
 exports.format_score = format_score;
 exports.format_score_with_commas = format_score_with_commas;
@@ -186,4 +260,5 @@ exports.send_echo = send_echo;
 exports.get_first_chat_channel = get_first_chat_channel;
 exports.is_my_developer = is_my_developer;
 exports.update_application_emoji_cache = update_application_emoji_cache;
+exports.send_embed_layout = send_embed_layout;
 exports.application_emoji_cache = application_emoji_cache;

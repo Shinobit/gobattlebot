@@ -1,6 +1,6 @@
-const {SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType} = require("discord.js");
+const {SlashCommandBuilder, EmbedBuilder} = require("discord.js");
 const {ultra_list} = require("../ultralist.json");
-const {restrict_text, sum, format_score, format_score_with_commas, application_emoji_cache} = require("../utils.js");
+const {restrict_text, sum, format_score, format_score_with_commas, send_embed_layout, application_emoji_cache} = require("../utils.js");
 
 const items_map = new Map();
 for (const item_data of ultra_list){
@@ -137,7 +137,7 @@ async function get_ultrarare_drops(interaction, client){
 
         const chest_emoji = application_emoji_cache.get("item_760") || "🧰";
         const total_ultrarare_formatted = format_score_with_commas(total_ultrarare);
-        const header_description = `Results are calculated based on **${format_score_with_commas(total)}** samples (*chest opened by players ${chest_emoji}*) including **${total_ultrarare_formatted}** ultrarare drops.\n`;
+        const header_description = `Results are calculated based on **${format_score_with_commas(total)}** samples (*chest opened by players ${chest_emoji}*) including **${total_ultrarare_formatted}** ultrarare drops.`;
         const max_items_by_pages = 7;
         const pages = new Array(Math.ceil(values.length / max_items_by_pages));
         const unknown_item_emoji = application_emoji_cache.get("item_91") || "📦";
@@ -148,7 +148,7 @@ async function get_ultrarare_drops(interaction, client){
         for (let i = 0; i < values.length; i++){
             if (Math.floor(i / max_items_by_pages) != current_page){
                 current_page++;
-                pages[current_page] = header_description;
+                pages[current_page] = "";
             }
 
             const [key, value] = drops_entries[i];
@@ -157,75 +157,15 @@ async function get_ultrarare_drops(interaction, client){
             pages[current_page] += `* ${item_emoji} **${restrict_text(ultra_info?.name || "*Unknow?*", 45)}**#${key}: \`${format_score(value)} (${(value / total_ultrarare * 100).toPrecision(2)}%)\`\n`;
         }
 
-        current_page = 1;
-        embed.setDescription(pages[current_page - 1] || "***There are no items to display in this list at the moment...***");
-
         embed.addFields(
             {name: "> 🌟 __Ultrarare__", value: `> ${total_ultrarare_formatted} (${(drops_ratio * 100).toPrecision(2)}%)`, inline: true},
             {name: `> ${unknown_item_emoji} __Other__`, value: `> ${format_score_with_commas(total - total_ultrarare)} (${((1 - drops_ratio) * 100).toPrecision(2)}%)`, inline: true}
         );
-
-        const nb_pages = pages.length || 1;
         
-        embed.setFooter({text: `Page ${current_page}/${nb_pages}`});
         embed.setTimestamp();
 
-		const previous_button = new ButtonBuilder();
-        previous_button.setCustomId("previous");
-        previous_button.setEmoji("◀️");
-        previous_button.setStyle(ButtonStyle.Primary);
-        previous_button.setDisabled(current_page == 1);
-
-        const next_button = new ButtonBuilder();
-        next_button.setCustomId("next");
-        next_button.setEmoji("▶️");
-        next_button.setStyle(ButtonStyle.Primary);
-        next_button.setDisabled(current_page == nb_pages);
-
-        const row = new ActionRowBuilder();
-        row.addComponents(previous_button, next_button);
-
-        const response_interaction = await interaction.editReply({
-            content: "Special mention to _Sage of the Ivy_ for providing some metadata on most of the game's ultrarares while waiting for the GoBattle API update!\nThanks to him!",
-            embeds: [embed],
-            components: [row]
-        });
-
-        function collector_filter(m){
-            const result = m.user.id == interaction.user.id;
-
-            if (!result){
-                m.reply({content: "You cannot interact with a command that you did not initiate yourself.", ephemeral: true}).catch((error) => {
-                    console.error(error);
-                });
-            }
-
-            return result;
-        }
-
-        async function button_interaction_logic(response_interaction){
-            try{
-                const confirmation = await response_interaction.awaitMessageComponent({filter: collector_filter, componentType: ComponentType.Button, time: 60_000});
-
-                if (confirmation.customId === "previous"){
-                    current_page--;
-                } else if (confirmation.customId === "next"){
-                    current_page++;
-                }
-
-                embed.setDescription(pages[current_page - 1]);
-                embed.setFooter({text: `Page ${current_page}/${nb_pages}`});
-                previous_button.setDisabled(current_page == 1);
-                next_button.setDisabled(current_page == nb_pages);
-
-                response_interaction = await confirmation.update({embeds: [embed], components: [row]});
-                await button_interaction_logic(response_interaction);
-            }catch (_error){
-                await interaction.editReply({content: "-# ⓘ This interaction has expired, please use the command again to be able to navigate the list.", components: []});
-            }
-        }
-
-        await button_interaction_logic(response_interaction);
+        const message_content = "Special mention to _Sage of the Ivy_ for providing some metadata on most of the game's ultrarares while waiting for the GoBattle API update!\nThanks to him!";
+        await send_embed_layout(interaction, embed, pages, header_description, message_content);
     }catch(error){
         await interaction.editReply(`Unable to generate template.\nContact ${client.application.owner} to resolve this issue.`);
         console.error(error);

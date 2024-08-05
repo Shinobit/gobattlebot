@@ -51,7 +51,7 @@ const client = new Client({
 
 client.login(process.env.TOKEN);
 
-client.on("ready", async (event) => {
+client.on(Events.ClientReady, async (event) => {
     database.init();
 
     console.log(`${event.user.tag} ready.`);
@@ -174,7 +174,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
                                 return;
                             }
 
-                            await interaction.editReply(`Impossible to connect. There is a problem with the GoBattle API.\nContact ${client.application.owner} to resolve this issue.`);
+                            await interaction.editReply(`Unable to connect. There is a problem with the GoBattle API.\nContact ${client.application.owner} to resolve this issue.`);
                             return;
                         }
 
@@ -184,20 +184,46 @@ client.on(Events.InteractionCreate, async (interaction) => {
                         }else{
                             interaction.editReply("Your account is already registered. You can log out at any time with `/user logout`.");
                         }
-
-                        /*
-                        https://gobattle.io/api.php/recover?platform=Web&ud=
-                        application/x-www-form-urlencoded
-                        post email: sammarzin22@gmail.com
-                        {id: "703", email: "sammarzin22@gmail.com"}
-                        */
                     }catch (error){
                         await interaction.editReply(`An internal error has occurred...\nContact ${client.application.owner} to resolve this issue.`);
                         console.error(error);
                     }
                     break;
                 case "recover":
-                    await interaction.reply({content: "Interaction not supported at this time.", ephemeral: true});
+                    try{
+                        await interaction.deferReply({ephemeral: true});
+
+                        const email = interaction.fields.getTextInputValue("email");
+
+                        const platform = "Web";
+                        const request_info = {
+                            method: "POST",
+                            headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            },
+                            body: new URLSearchParams({
+                                "email": email
+                            })
+                        };
+
+                        const response = await fetch(`https://gobattle.io/api.php/recover?platform=${platform}&ud=`, request_info);
+                        const data = await response.json();
+
+                        if (!response.ok){
+                            if (data?.error == "Error sending email"){
+                                await interaction.editReply("# ⚠️ Recovery error\nThe email is incorrect.");
+                                return;
+                            }
+
+                            await interaction.editReply(`Unable to recover. There is a problem with the GoBattle API.\nContact ${client.application.owner} to resolve this issue.`);
+                            return;
+                        }
+
+                        interaction.editReply(`This is the Email of the user _#${data.id}_. Let's ckeck out your email and follow instructions fer next steps. Let's play GoBattle!`);
+                    }catch (error){
+                        await interaction.editReply(`An internal error has occurred...\nContact ${client.application.owner} to resolve this issue.`);
+                        console.error(error);
+                    }
                     break;
                 default:
                     await interaction.reply({content: "The form submission was not processed successfully because I am not familiar with the form.", ephemeral: true});
@@ -245,7 +271,7 @@ client.on(Events.MessageCreate, async (msg) => {
                 await msg.guild.leave();
                 
                 break;
-            case "!gb_emoji":
+            case "!gb_emojis":
                 if (!is_my_developer(client, msg.author)){
                     await msg.reply("You do not have permission to use this command.");
                     return;
@@ -254,7 +280,7 @@ client.on(Events.MessageCreate, async (msg) => {
                 const nb_emoji = 60;
                 for (let i = 0; i < nb_emoji; i++){
                     const emojis = Array.from(application_emoji_cache.values());
-                    const index = Math.floor(Math.random() * emojis.length); 
+                    const index = Math.floor(Math.random() * emojis.length);
 
                     content += `${emojis[index]}`;
                 }
@@ -269,6 +295,16 @@ client.on(Events.MessageCreate, async (msg) => {
 
                 const level = parseInt(command_info[1] || 0, 10);
                 await msg.reply(`Level ${level} is: (${get_level_to_emojis(level)})`);
+
+                break;
+            case "!gb_emoji_name":
+                if (!is_my_developer(client, msg.author)){
+                    await msg.reply("You do not have permission to use this command.");
+                    return;
+                }
+
+                const emoji = application_emoji_cache.get(command_info[1]) || "_Unknown?_";
+                await msg.reply(`The emoji is: ${emoji}`);
 
                 break;
         }

@@ -8,6 +8,7 @@ const database = new sqlite.DatabaseSync("database.sqlite");
 let add_gobattle_accesse_statement;
 let remove_gobattle_accesse_statement;
 let get_gobattle_token_by_gobattle_user_id_statement;
+let get_gobattle_token_by_discord_user_id_statement;
 let discord_user_id_to_gobattle_user_id_statement;
 let gobattle_user_id_to_discord_user_id_statement;
 
@@ -41,6 +42,10 @@ function init(){
 
         get_gobattle_token_by_gobattle_user_id_statement = database.prepare(`
             SELECT gobattle_token FROM user_session WHERE gobattle_user_id = $gobattle_user_id;
+        `);
+
+        get_gobattle_token_by_discord_user_id_statement = database.prepare(`
+            SELECT gobattle_token FROM user_session WHERE discord_user_id = $discord_user_id;
         `);
 
         discord_user_id_to_gobattle_user_id_statement = database.prepare(`
@@ -90,6 +95,14 @@ function get_gobattle_token_by_gobattle_user_id(gobattle_user_id){
     return data.gobattle_token;
 }
 
+function get_gobattle_token_by_discord_user(discord_user){
+    const data = get_gobattle_token_by_discord_user_id_statement.get({
+        $discord_user_id: discord_user.id
+    });
+
+    return data.gobattle_token;
+}
+
 function discord_user_to_gobattle_user_id(discord_user){
     const data = discord_user_id_to_gobattle_user_id_statement.get({
         $discord_user_id: BigInt(discord_user.id)
@@ -110,5 +123,6 @@ exports.init = init;
 exports.add_gobattle_accesse = add_gobattle_accesse;
 exports.remove_gobattle_accesse = remove_gobattle_accesse;
 exports.get_gobattle_token_by_gobattle_id = get_gobattle_token_by_gobattle_user_id;
+exports.get_gobattle_token_by_discord_user = get_gobattle_token_by_discord_user;
 exports.discord_user_to_gobattle_user_id = discord_user_to_gobattle_user_id
 exports.gobattle_user_id_to_discord_user_id = gobattle_user_id_to_discord_user_id;
