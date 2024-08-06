@@ -1,36 +1,34 @@
-const {SlashCommandBuilder, EmbedBuilder} = require("discord.js");
+const {SlashCommandBuilder, EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType} = require("discord.js");
 const {send_embed_layout} = require("../utils.js");
 
 const help_command = new SlashCommandBuilder();
 help_command.setName("help");
 help_command.setDescription("Get help on how to use me.");
 
-async function get_list_commands(application){
+async function get_list_commands(application, command_type = ApplicationCommandType.ChatInput){
 	const result = new Map();
 	const commands = await application.commands.fetch();
 
 	for (const command of commands.values()){
 		let base = true;
 		
-		for (const option of command.options){
-			if (option.type == 1){
-				base = false;
-			}
+		if (command.type != command_type){
+			continue;
+		}
 
-			let sub_base = true;
-			if (option.options){
+		for (const option of command.options){
+			if (option.type == ApplicationCommandOptionType.Subcommand){
+				base = false;
+				if (option.type == command_type){
+					result.set(`${command.name} ${option.name}`, {id: command.id, description: option.description, base: command});
+				}
+			}else if (option.type == ApplicationCommandOptionType.SubcommandGroup){
+				base = false;
 				for (const sub_option of option.options){
-					if (sub_option.type == 1){
-						sub_base = false;
+					if (sub_option.type == command_type){
 						result.set(`${command.name} ${option.name} ${sub_option.name}`, {id: command.id, description: sub_option.description, base: command});
 					}
 				}
-			}else if (option.type != 1){
-				sub_base = false;
-			}
-
-			if (sub_base){
-				result.set(`${command.name} ${option.name}`, {id: command.id, description: option.description, base: command});
 			}
 		}
 

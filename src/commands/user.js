@@ -366,7 +366,7 @@ async function get_login(interaction, _client){
 }
 
 async function get_logout(interaction, _client){
-    const succes = database.remove_gobattle_accesse(interaction.user);
+    const succes = database.remove_gobattle_accesse_by_discord_user(interaction.user);
 
     if (succes){
         await interaction.reply({content: "Your session has ended and has been successfully deleted. You can reconnect at any time with `/user login`.", ephemeral: true});
@@ -417,6 +417,7 @@ async function get_info(interaction, client){
         const data = await response.json();
 
         if (data?.error == "Invalid token"){
+            database.remove_gobattle_accesse_by_gobattle_user_id(user_id);
             await interaction.editReply(`User _#${user_id}_ session is unknown to me or has expired. The user must log in to their account with \`/user login\`.`);
             return;
         }
@@ -603,6 +604,7 @@ async function get_friend_pending_count(interaction, client){
     const data = await response.json();
 
     if (data?.error == "Invalid token"){
+        database.remove_gobattle_accesse_by_gobattle_user_id(user_id);
         await interaction.editReply(`User _#${user_id}_ session is unknown to me or has expired. The user must log in to their account with \`/user login\`.`);
         return;
     }
@@ -638,6 +640,7 @@ async function get_friend_pending_requests(interaction, client, type){
     const data = await response.json();
 
     if (data?.error == "Invalid token"){
+        database.remove_gobattle_accesse_by_gobattle_user_id(user_id);
         await interaction.editReply(`User _#${user_id}_ session is unknown to me or has expired. The user must log in to their account with \`/user login\`.`);
         return;
     }
@@ -698,6 +701,7 @@ async function get_friend_list(interaction, client){
     const data = await response.json();
 
     if (data?.error == "Invalid token"){
+        database.remove_gobattle_accesse_by_gobattle_user_id(user_id);
         await interaction.editReply(`User _#${user_id}_ session is unknown to me or has expired. The user must log in to their account with \`/user login\`.`);
         return;
     }
@@ -776,6 +780,7 @@ async function get_friend_add(interaction, client){
             const data = await response.json();
             switch (data?.error){
                 case "Invalid token":
+                    database.remove_gobattle_accesse_by_gobattle_user_id(my_gobattle_user_id);
                     await interaction.editReply("Your user session is unknown to me or has expired. You must log in to your account with `/user login`.");
                     return;
                 case "Account is already a friend":
@@ -831,6 +836,7 @@ async function get_friend_delete(interaction, client){
         if (!response.ok){
             switch (data?.error){
                 case "Invalid token":
+                    database.remove_gobattle_accesse_by_discord_user(interaction.user);
                     await interaction.editReply("Your user session is unknown to me or has expired. You must log in to your account with `/user login`.");
                     return;
                 default:
@@ -873,6 +879,7 @@ async function get_friend_cancel(interaction, client){
         if (!response.ok){
             switch (data?.error){
                 case "Invalid token":
+                    database.remove_gobattle_accesse_by_discord_user(interaction.user);
                     await interaction.editReply("Your user session is unknown to me or has expired. You must log in to your account with `/user login`.");
                     return;
                 default:
@@ -915,6 +922,7 @@ async function get_friend_accept(interaction, client){
         if (!response.ok){
             switch (data?.error){
                 case "Invalid token":
+                    database.remove_gobattle_accesse_by_discord_user(interaction.user);
                     await interaction.editReply("Your user session is unknown to me or has expired. You must log in to your account with `/user login`.");
                     return;
                 case "Error accepting request":
@@ -960,6 +968,7 @@ async function get_friend_ignore(interaction, client){
         if (!response.ok){
             switch (data?.error){
                 case "Invalid token":
+                    database.remove_gobattle_accesse_by_discord_user(interaction.user);
                     await interaction.editReply("Your user session is unknown to me or has expired. You must log in to your account with `/user login`.");
                     return;
                 default:
