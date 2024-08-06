@@ -378,7 +378,7 @@ async function get_logout(interaction, _client){
 async function get_recover(interaction, _client){
     const modal = new ModalBuilder();
 	modal.setCustomId("recover");
-	modal.setTitle("Recover your Gobattle account.");
+	modal.setTitle("Recover your GoBattle.io account.");
 
     const email_input = new TextInputBuilder();
     email_input.setCustomId("email");
