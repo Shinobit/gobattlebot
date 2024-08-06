@@ -60,3 +60,12 @@ Brutal method to stop all containers:
 ```bash
 sudo docker-compose down
 ```
+
+## Screenshot Gallery
+<p align="center">
+	<img src="./screenshot_gallery/ranking_king.png">
+	<img src="./screenshot_gallery/speedrun.png">
+	<img src="./screenshot_gallery/item_ultrarare_drop.png">
+	<img src="./screenshot_gallery/user_friend_list.png">
+	<img src="./screenshot_gallery/info.png">
+</p>
