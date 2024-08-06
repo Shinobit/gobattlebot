@@ -22,14 +22,14 @@ async function get_info(interaction, client){
         const project_initiator_user_id = "461495109855215616"; // Please be courteous and do not change this value.
 
         embed.addFields(
-            {name: "> Gobattle.io server", value: "> [Link](https://discord.gg/gobattle-io-official-380588354934276097)", inline: true},
+            {name: "> Official Gobattle.io Guild", value: "> [Link](https://discord.gg/gobattle-io-official-380588354934276097)", inline: true},
             {name: "> Application Owner", value: `> ${client.application.owner}`, inline: true},
-            {name: "> Approximate guild count", value: `> ${typeof approximate_guild_count == "number" ? format_score_with_commas(approximate_guild_count) : approximate_guild_count}`, inline: true}
+            {name: "> Approximate Guild count", value: `> ${typeof approximate_guild_count == "number" ? format_score_with_commas(approximate_guild_count) : approximate_guild_count}`, inline: true}
         );
 
         embed.addFields(
-            {name: "> Terms of service", value: `> [Link](${tos})`, inline: true},
-            {name: "> Privacy policy", value: `> [Link](${pp})`, inline: true},
+            {name: "> Terms of Service", value: `> [Link](${tos})`, inline: true},
+            {name: "> Privacy Policy", value: `> [Link](${pp})`, inline: true},
             {name: "> Project initiator", value: `> <@${project_initiator_user_id}>`, inline: true}
         );
 
