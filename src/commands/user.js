@@ -14,6 +14,12 @@ const user_command = new SlashCommandBuilder();
 user_command.setName("user");
 user_command.setDescription("Command relating to users in the game.");
 user_command.addSubcommand((subcommand) => {
+    subcommand.setName("create");
+	subcommand.setDescription("Create a GoBattle.io account.");
+
+    return subcommand;
+});
+user_command.addSubcommand((subcommand) => {
     subcommand.setName("login");
 	subcommand.setDescription("Log in to your GoBattle.io account.");
 
@@ -261,6 +267,9 @@ async function get_user(interaction, client){
     
     if (!subcommand_group){
         switch (subcommand){
+            case "create":
+                await get_create(interaction, client);
+                break;
             case "login":
                 await get_login(interaction, client);
                 break;
@@ -334,6 +343,31 @@ async function get_friend(interaction, client){
     }
 }
 
+async function get_create(interaction, _client){
+    const modal = new ModalBuilder();
+	modal.setCustomId("create");
+	modal.setTitle("Create a GoBattle.io account.");
+
+    const email_input = new TextInputBuilder();
+    email_input.setCustomId("email");
+    email_input.setLabel("Email");
+    email_input.setStyle(TextInputStyle.Short);
+    email_input.setRequired(true);
+
+    const password_input = new TextInputBuilder();
+    password_input.setCustomId("password");
+    password_input.setLabel("Password (Don't give Discord password!)");
+    password_input.setStyle(TextInputStyle.Short);
+    email_input.setRequired(true);
+
+    const email_action_row = new ActionRowBuilder().addComponents(email_input);
+	const password_action_row = new ActionRowBuilder().addComponents(password_input);
+
+    modal.addComponents(email_action_row, password_action_row);
+
+    await interaction.showModal(modal);
+}
+
 async function get_login(interaction, _client){
     const gobattle_user_id = database.discord_user_to_gobattle_user_id(interaction.user);
     if (gobattle_user_id){
@@ -343,7 +377,7 @@ async function get_login(interaction, _client){
 
     const modal = new ModalBuilder();
 	modal.setCustomId("login");
-	modal.setTitle("Login to Gobattle account.");
+	modal.setTitle("Login to GoBattle.io account.");
 
     const email_input = new TextInputBuilder();
     email_input.setCustomId("email");

@@ -1,5 +1,5 @@
 const {Client, Events, Partials, IntentsBitField, Routes, ActivityType} = require("discord.js");
-const {get_first_chat_channel, is_my_developer, update_application_emoji_cache, get_level_to_emojis, application_emoji_cache} = require("./utils.js");
+const {get_first_chat_channel, is_my_developer, update_application_emoji_cache, get_level_to_emojis, application_emoji_cache, get_info_application} = require("./utils.js");
 const database = require("./database/database.js");
 
 const {get_ranking, ranking_command} = require("./commands/ranking.js");
@@ -60,7 +60,7 @@ client.on(Events.ClientReady, async (event) => {
 
     await client.application.fetch();
     await update_application_emoji_cache(client.application);
-    
+
     try{
         await client.rest.put(
             Routes.applicationCommands(client.user.id),
@@ -146,6 +146,55 @@ client.on(Events.InteractionCreate, async (interaction) => {
             }
         }else if (interaction.isModalSubmit()){
             switch (interaction.customId){
+                case "create":
+                    try{
+                        await interaction.deferReply({ephemeral: true});
+
+                        const email = interaction.fields.getTextInputValue("email");
+                        const password = interaction.fields.getTextInputValue("password");
+
+                        const platform = "Web";
+                        const request_info = {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                            },
+                            body: new URLSearchParams({
+                                "email": email,
+                                "password": password,
+                                "trackingId": ""
+                            })
+                        };
+
+                        const response = await fetch(`https://gobattle.io/api.php/register?platform=${platform}&ud=`, request_info);
+                        const data = await response.json();
+
+                        if (!response.ok){
+                            switch (data?.error){
+                                case "Invalid email":
+                                    await interaction.editReply("# ⚠️ Account creation error\nThe email introduced is not valid. Please reenter your email.");
+                                    return;
+                                case "Password short or too easy":
+                                    await interaction.editReply("# ⚠️ Account creation error\nYour password is too easy to guess. Please use a better password.");
+                                    return;
+                                case "Duplicated user":
+                                    await interaction.editReply("# ⚠️ Account creation error\nEmail is already in use.");
+                                    return;
+                                default:
+                                    await interaction.editReply(`Unable to create account. There is a problem with the GoBattle API.\nContact ${client.application.owner} to resolve this issue.`);
+                            }
+                            return;
+                        }
+
+                        const info = await get_info_application(client.application);
+                        const tos = info?.terms_of_service_url || "https://gobattle.io/tos.html";
+                        const pp = info?.privacy_policy_url || "https://www.iubenda.com/privacy-policy/8108614";
+                        interaction.editReply(`Thank you for register to GoBattle.io.\nReview your Email and follow the instructions to activate your account _#${data.id}_.\nBy continuing to create your account we assume that you accept our [Terms of Use](${tos}) and our [Privacy Policy](${pp}).`);
+                    }catch (error){
+                        await interaction.editReply(`An internal error has occurred...\nContact ${client.application.owner} to resolve this issue.`);
+                        console.error(error);
+                    }
+                    break;
                 case "login":
                     try{
                         await interaction.deferReply({ephemeral: true});
@@ -157,7 +206,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
                         const request_info = {
                             method: "POST",
                             headers: {
-                            "Content-Type": "application/x-www-form-urlencoded",
+                                "Content-Type": "application/x-www-form-urlencoded",
                             },
                             body: new URLSearchParams({
                                 "email": email,
@@ -199,7 +248,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
                         const request_info = {
                             method: "POST",
                             headers: {
-                            "Content-Type": "application/x-www-form-urlencoded",
+                                "Content-Type": "application/x-www-form-urlencoded",
                             },
                             body: new URLSearchParams({
                                 "email": email

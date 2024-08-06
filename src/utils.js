@@ -175,6 +175,21 @@ async function update_application_emoji_cache(application){
     return application_emoji_cache;
 }
 
+async function get_info_application(application){
+    const api_version = 10;
+    const headers = {
+        "Authorization": `Bot ${application.client.token}`
+    };
+
+    const response = await fetch(`https://discord.com/api/v${api_version}/applications/${application.id}`, {method: "GET", headers: headers});
+    if (!response.ok){
+        return;
+    }
+
+    const data = await response.json();
+    return data;
+}
+
 async function send_embed_layout(interaction, embed, pages, header_description = "", content_message){
     let current_page = 1;
 
@@ -261,4 +276,5 @@ exports.get_first_chat_channel = get_first_chat_channel;
 exports.is_my_developer = is_my_developer;
 exports.update_application_emoji_cache = update_application_emoji_cache;
 exports.send_embed_layout = send_embed_layout;
+exports.get_info_application = get_info_application;
 exports.application_emoji_cache = application_emoji_cache;
