@@ -1,28 +1,76 @@
-const {SlashCommandBuilder} = require("discord.js");
+const {SlashCommandBuilder, EmbedBuilder} = require("discord.js");
+const {send_embed_layout} = require("../utils.js");
 
 const help_command = new SlashCommandBuilder();
 help_command.setName("help");
 help_command.setDescription("Get help on how to use me.");
 
-async function get_help(interaction, client){
-    await interaction.deferReply({ephemeral: true});
+async function get_list_commands(application){
+	const result = new Map();
+	const commands = await application.commands.fetch();
 
-	try{
-		const commands = await client.application.commands.fetch();
+	for (const command of commands.values()){
+		let base = true;
 		
-		let description = "";
-	
-		for (const command of commands.values()){
-		    description += `\n- </${command.name}:${command.id}>`;
+		for (const option of command.options){
+			if (option.type == 1){
+				base = false;
+			}
 
-            for (const option of command.options){
-                description += ` _<${option.name}${option.required ? "*" : "?"}>_`;
-            }
+			let sub_base = true;
+			if (option.options){
+				for (const sub_option of option.options){
+					if (sub_option.type == 1){
+						sub_base = false;
+						result.set(`${command.name} ${option.name} ${sub_option.name}`, {id: command.id, description: sub_option.description, base: command});
+					}
+				}
+			}else if (option.type != 1){
+				sub_base = false;
+			}
 
-            description += `: **${command.description}**`;
+			if (sub_base){
+				result.set(`${command.name} ${option.name}`, {id: command.id, description: option.description, base: command});
+			}
 		}
 
-		interaction.editReply(`Hi ${interaction.user}, Here are some commands that might be useful to you: ${description}`);
+		if (base){
+			result.set(command.name, {id: command.id, description: command.description, base: command});
+		}
+	}
+
+	return result;
+}
+
+async function get_help(interaction, client){
+    await interaction.deferReply();
+
+	try{
+		const embed = new EmbedBuilder();
+        embed.setTitle("ℹ️ List of commands ℹ️");
+
+		const commands = await get_list_commands(client.application);
+
+		const header_description = `Hi ${interaction.user}, Here are some commands that might be useful to you:`;
+        const max_items_by_pages = 7;
+        const pages = new Array(Math.ceil(commands.size / max_items_by_pages));
+
+		let current_page = -1;
+		let i = 0;
+        for (const [name, data] of commands.entries()){
+            if (Math.floor(i / max_items_by_pages) != current_page){
+                current_page++;
+                pages[current_page] = "";
+            }
+
+            pages[current_page] += `* </${name}:${data.id}>: **${data.description}**\n`;
+			
+			i++;
+		}
+
+		embed.setTimestamp();
+
+        await send_embed_layout(interaction, embed, pages, header_description);
 	}catch (error){
 		await interaction.editReply(`Unable to list commands.\nContact ${client.application.owner} to resolve this issue.`);
 		console.error(error);

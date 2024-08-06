@@ -15,7 +15,7 @@ item_command.setDescription("Command relating to items and other consumables in 
 item_command.addSubcommand((subcommand) => {
     subcommand.setName("info");
 	subcommand.setDescription("Obtain the characteristics of an item.");
-    subcommand.addNumberOption((option) => {
+    subcommand.addIntegerOption((option) => {
         option.setName("item_id");
         option.setDescription("The identifier of the item.");
         option.setMinValue(1);

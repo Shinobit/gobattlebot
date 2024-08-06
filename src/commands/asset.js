@@ -8,7 +8,7 @@ asset_command.setDescription("Command relating to game data files (client side).
 asset_command.addSubcommand((subcommand) => {
     subcommand.setName("info");
 	subcommand.setDescription("Get a specific client file.");
-    subcommand.addNumberOption((option) => {
+    subcommand.addIntegerOption((option) => {
         option.setName("file_id");
         option.setDescription("The identifier of the item.");
         option.setMinValue(1);

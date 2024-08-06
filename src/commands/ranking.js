@@ -51,7 +51,7 @@ ranking_command.addSubcommand((subcommand) => {
 ranking_command.addSubcommand((subcommand) => {
     subcommand.setName("speedrun");
 	subcommand.setDescription("Get Speedrun ranking");
-    subcommand.addNumberOption((option) => {
+    subcommand.addIntegerOption((option) => {
         option.setName("dungeon_id");
         option.setDescription("The dungeon identifier.");
         option.setMinValue(1);

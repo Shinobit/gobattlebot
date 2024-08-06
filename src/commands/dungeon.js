@@ -8,7 +8,7 @@ dungeon_command.setDescription("Command relating to dungeons and other maps in t
 dungeon_command.addSubcommand((subcommand) => {
     subcommand.setName("info");
 	subcommand.setDescription("Obtain the characteristics of a dungeon.");
-    subcommand.addNumberOption((option) => {
+    subcommand.addIntegerOption((option) => {
         option.setName("dungeon_id");
         option.setDescription("The dungeon identifier.");
         option.setMinValue(1);

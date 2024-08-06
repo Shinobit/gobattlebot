@@ -34,7 +34,7 @@ user_command.addSubcommand((subcommand) => {
 user_command.addSubcommand((subcommand) => {
     subcommand.setName("info");
 	subcommand.setDescription("Get general information about a user.");
-    subcommand.addNumberOption((option) => {
+    subcommand.addIntegerOption((option) => {
         option.setName("user_id");
         option.setDescription("The user identifier.");
         option.setMinValue(1);
@@ -45,6 +45,7 @@ user_command.addSubcommand((subcommand) => {
 
     return subcommand;
 });
+/*
 user_command.addSubcommand((subcommand) => {
     subcommand.setName("king");
 	subcommand.setDescription("Get general information about the current king.");
@@ -55,7 +56,7 @@ user_command.addSubcommand((subcommand) => {
     subcommand.setName("bank");
 	subcommand.setDescription("Get the list of items contained in a game user's bank.");
 
-    subcommand.addNumberOption((option) => {
+    subcommand.addIntegerOption((option) => {
         option.setName("user_id");
         option.setDescription("The user identifier.");
         option.setMinValue(1);
@@ -64,7 +65,7 @@ user_command.addSubcommand((subcommand) => {
         return option;
     });
 
-    subcommand.addNumberOption((option) => {
+    subcommand.addIntegerOption((option) => {
         option.setName("index_book");
         option.setDescription("Index of the bank book to consult.");
         option.setMinValue(1);
@@ -80,7 +81,7 @@ user_command.addSubcommand((subcommand) => {
     subcommand.setName("inventory");
 	subcommand.setDescription("Get the list of items contained in a game user's inventory.");
 
-    subcommand.addNumberOption((option) => {
+    subcommand.addIntegerOption((option) => {
         option.setName("user_id");
         option.setDescription("The user identifier.");
         option.setMinValue(1);
@@ -91,11 +92,12 @@ user_command.addSubcommand((subcommand) => {
 
     return subcommand;
 });
+*/
 user_command.addSubcommand((subcommand) => {
     subcommand.setName("gobattle_to_discord");
 	subcommand.setDescription("Get Discord user from GoBattle user.");
 
-    subcommand.addNumberOption((option) => {
+    subcommand.addIntegerOption((option) => {
         option.setName("user_id");
         option.setDescription("The user identifier.");
         option.setMinValue(1);
@@ -126,7 +128,7 @@ user_command.addSubcommandGroup((friend_command) => {
     friend_command.addSubcommand((subcommand) => {
         subcommand.setName("pending_count");
         subcommand.setDescription("Get the number of friend requests a user has.");
-        subcommand.addNumberOption((option) => {
+        subcommand.addIntegerOption((option) => {
             option.setName("user_id");
             option.setDescription("The user identifier.");
             option.setMinValue(1);
@@ -140,7 +142,7 @@ user_command.addSubcommandGroup((friend_command) => {
     friend_command.addSubcommand((subcommand) => {
         subcommand.setName("incoming_requests");
         subcommand.setDescription("Get the list of a user's incoming friend requests.");
-        subcommand.addNumberOption((option) => {
+        subcommand.addIntegerOption((option) => {
             option.setName("user_id");
             option.setDescription("The user identifier.");
             option.setMinValue(1);
@@ -154,7 +156,7 @@ user_command.addSubcommandGroup((friend_command) => {
     friend_command.addSubcommand((subcommand) => {
         subcommand.setName("outgoing_requests");
         subcommand.setDescription("Get the list of a user's outgoing friend requests.");
-        subcommand.addNumberOption((option) => {
+        subcommand.addIntegerOption((option) => {
             option.setName("user_id");
             option.setDescription("The user identifier.");
             option.setMinValue(1);
@@ -168,7 +170,7 @@ user_command.addSubcommandGroup((friend_command) => {
     friend_command.addSubcommand((subcommand) => {
         subcommand.setName("list");
         subcommand.setDescription("Get a user's friends list.");
-        subcommand.addNumberOption((option) => {
+        subcommand.addIntegerOption((option) => {
             option.setName("user_id");
             option.setDescription("The user identifier.");
             option.setMinValue(1);
@@ -182,7 +184,7 @@ user_command.addSubcommandGroup((friend_command) => {
     friend_command.addSubcommand((subcommand) => {
         subcommand.setName("add");
         subcommand.setDescription("Send a friend request to a user.");
-        subcommand.addNumberOption((option) => {
+        subcommand.addIntegerOption((option) => {
             option.setName("user_id");
             option.setDescription("The user identifier.");
             option.setMinValue(1);
@@ -196,7 +198,7 @@ user_command.addSubcommandGroup((friend_command) => {
     friend_command.addSubcommand((subcommand) => {
         subcommand.setName("delete");
         subcommand.setDescription("Remove a user from your friends list.");
-        subcommand.addNumberOption((option) => {
+        subcommand.addIntegerOption((option) => {
             option.setName("user_id");
             option.setDescription("The user identifier.");
             option.setMinValue(1);
@@ -210,7 +212,7 @@ user_command.addSubcommandGroup((friend_command) => {
     friend_command.addSubcommand((subcommand) => {
         subcommand.setName("cancel");
         subcommand.setDescription("Cancel the friend request sent to a user.");
-        subcommand.addNumberOption((option) => {
+        subcommand.addIntegerOption((option) => {
             option.setName("user_id");
             option.setDescription("The user identifier.");
             option.setMinValue(1);
@@ -224,7 +226,7 @@ user_command.addSubcommandGroup((friend_command) => {
     friend_command.addSubcommand((subcommand) => {
         subcommand.setName("accept");
         subcommand.setDescription("Accept a friend request from a user.");
-        subcommand.addNumberOption((option) => {
+        subcommand.addIntegerOption((option) => {
             option.setName("user_id");
             option.setDescription("The user identifier.");
             option.setMinValue(1);
@@ -238,7 +240,7 @@ user_command.addSubcommandGroup((friend_command) => {
     friend_command.addSubcommand((subcommand) => {
         subcommand.setName("ignore");
         subcommand.setDescription("Ignore a friend request from a user.");
-        subcommand.addNumberOption((option) => {
+        subcommand.addIntegerOption((option) => {
             option.setName("user_id");
             option.setDescription("The user identifier.");
             option.setMinValue(1);
