@@ -176,8 +176,8 @@ async function get_general(interaction, client, type){
         const max_items_by_pages = 7;
         const pages = new Array(Math.ceil(data.length / max_items_by_pages));
         const unknown_head_emoji = application_emoji_cache.get("heads_item_0") || "👤";
-        const kills_emoji = application_emoji_cache.get("compass_item97") || "🗡️";
-        const deaths_emoji = application_emoji_cache.get("compass_item96") || "💀";
+        const kills_emoji = application_emoji_cache.get("compass_item96") || "🗡️";
+        const deaths_emoji = application_emoji_cache.get("compass_item97") || "💀";
         const coins_emoji = application_emoji_cache.get("coin") || "🪙";
         const experience_emoji = application_emoji_cache.get("fuego") || "🔥";
         const level_emoji = application_emoji_cache.get("compass_item121") || "🔰";
