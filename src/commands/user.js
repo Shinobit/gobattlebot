@@ -645,7 +645,7 @@ async function get_info(interaction, client){
                 const response = await fetch(`https://gobattle.io/api.php/buypoint/${confirmation.customId}/${gobattle_token}?platform=${platform}&ud=`, request_info);
                 const data = await response.json();
 
-                if (response.ok){
+                if (!response.ok){
                     switch (data?.error){
                         case "Invalid token":
                             database.remove_gobattle_access_by_gobattle_user_id(user_id);
