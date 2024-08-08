@@ -225,7 +225,7 @@ async function send_embed_layout(interaction, embed, pages, header_description =
     });
 
     function collector_filter(m){
-        const result = m.user.id == interaction.user.id;
+        const result = m.user.id == interaction.user.id || is_my_developer(m.user.client, m.user);
     
         if (!result){
             m.reply({content: "You cannot interact with a command that you did not initiate yourself.", ephemeral: true}).catch((error) => {

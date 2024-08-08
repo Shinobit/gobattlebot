@@ -227,7 +227,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
                             return;
                         }
 
-                        const success = database.add_gobattle_accesse(interaction.user, data.id, data.token);
+                        const success = database.add_gobattle_access(interaction.user, data.id, data.token);
                         if (success){
                             interaction.editReply("Your account has been successfully registered. You can log out at any time with `/user logout`.");
                         }else{

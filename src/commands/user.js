@@ -1,4 +1,4 @@
-const {EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle} = require("discord.js");
+const {EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, ComponentType} = require("discord.js");
 const {is_my_developer, restrict_text, format_score, format_score_with_commas, get_level, get_level_to_emojis, send_embed_layout, application_emoji_cache} = require("../utils.js");
 const database = require("../database/database.js");
 const head_list = require("../head_list.json");
@@ -400,9 +400,9 @@ async function get_login(interaction, _client){
 }
 
 async function get_logout(interaction, _client){
-    const succes = database.remove_gobattle_accesse_by_discord_user(interaction.user);
+    const success = database.remove_gobattle_access_by_discord_user(interaction.user);
 
-    if (succes){
+    if (success){
         await interaction.reply({content: "Your session has ended and has been successfully deleted. You can reconnect at any time with `/user login`.", ephemeral: true});
     }else{
         await interaction.reply({content: "You do not have a registered session.", ephemeral: true});
@@ -450,124 +450,254 @@ async function get_info(interaction, client){
         const response = await fetch(`https://gobattle.io/api.php/bootstrap/${server_version}/${gobattle_token}?platform=${platform}&ud=`);
         const data = await response.json();
 
-        if (data?.error == "Invalid token"){
-            database.remove_gobattle_accesse_by_gobattle_user_id(user_id);
-            await interaction.editReply(`User _#${user_id}_ session is unknown to me or has expired. The user must log in to their account with \`/user login\`.`);
-            return;
-        }
-
         if (!response.ok){
+            if (data?.error == "Invalid token"){
+                database.remove_gobattle_access_by_gobattle_user_id(user_id);
+                await interaction.editReply(`User _#${user_id}_ session is unknown to me or has expired. The user must log in to their account with \`/user login\`.`);
+                return;
+            }
+
             await interaction.editReply(`Unable to retrieve user data. There is a problem with the Gobattle API.\nContact ${client.application.owner} to resolve this issue.`);
             return;
         }
 
-        const embed = new EmbedBuilder();
+        function get_embed_user(data_user){
+            const embed = new EmbedBuilder();
 
-        const unknown_head_emoji = application_emoji_cache.get("heads_item_0") || "👤";
-        const streamer_emoji = application_emoji_cache.get("compass_item122") || "🔴";
-        const head_data = heads_map.get(data.user.skin_head);
-        const head_emoji = application_emoji_cache.get(head_data?.emoji) || unknown_head_emoji;
+            const unknown_head_emoji = application_emoji_cache.get("heads_item_0") || "👤";
+            const streamer_emoji = application_emoji_cache.get("compass_item122") || "🔴";
+            const head_data = heads_map.get(data_user.skin_head);
+            const head_emoji = application_emoji_cache.get(head_data?.emoji) || unknown_head_emoji;
 
-        embed.setTitle(`${head_emoji} ${data.user.streamer ? `${streamer_emoji} ` : ""}**${restrict_text(data.user.nick, 60)}**#${data.user.id}`);
-        if (typeof head_emoji != "string"){
-            embed.setThumbnail(head_emoji.imageURL());
+            embed.setTitle(`${head_emoji} ${data_user.streamer ? `${streamer_emoji} ` : ""}**${restrict_text(data_user.nick, 60)}**#${data_user.id}`);
+            if (typeof head_emoji != "string"){
+                embed.setThumbnail(head_emoji.imageURL());
+            }
+
+            const level = get_level(data_user.experience);
+            embed.setDescription(`${get_level_to_emojis(Math.min(level, 2000))}\n${restrict_text("_This user has no description..._", 250)}`);
+            embed.setColor(0x500000);
+
+            const id_emoji = application_emoji_cache.get("item_348") || "🏷️";
+            const coins_emoji = application_emoji_cache.get("coin") || "🪙";
+            const diamonds_emoji = "💎";
+            const level_emoji = application_emoji_cache.get("compass_item121") || "💪";
+            const experience_emoji = application_emoji_cache.get("fuego") || "🔥";
+            const role_emoji = application_emoji_cache.get("item_36") || "🎖";
+
+            embed.addFields(
+                {name: `> ${id_emoji} __Identifier__`, value: `> ${data_user.id}`, inline: true},
+                {name: `> ${coins_emoji} __Coins__`, value: `> ${format_score_with_commas(data_user.coins)}`, inline: true},
+                {name: `> ${diamonds_emoji} __Diamonds__`, value: `> ***${format_score_with_commas(data_user.diamonds)}***`, inline: true}
+            );
+
+            embed.addFields(
+                {name: `> ${level_emoji} __Level__`, value: `> ${format_score_with_commas(level)}`, inline: true},
+                {name: `> ${experience_emoji} __Experience__`, value: `> ${format_score_with_commas(data_user.experience)}`, inline: true},
+                {name: `> ${role_emoji} __Role__`, value: `> ${data_user.streamer ? `${streamer_emoji} Streamer` : "Player"}`, inline: true}
+            );
+
+            const equipped_attack = data_user.attack - data_user.base_attack;
+            const equipped_defense = data_user.defense - data_user.base_defense;
+            const equipped_luck = data_user.luck - data_user.base_luck;
+            const equipped_hp = data_user.hp -  data_user.base_hp;
+            const equipped_regeneration = data_user.regeneration - data_user.base_regeneration;
+            const equipped_speed = data_user.speed - data_user.base_speed;
+
+            const formatted_attack = data_user.attack > 0 ? "+" + data_user.attack : data_user.attack;
+            const formatted_defense = data_user.defense > 0 ? "+" + data_user.defense : data_user.defense;
+            const formatted_luck = data_user.luck > 0 ? "+" + data_user.luck : data_user.luck;
+            const formatted_hp = data_user.hp > 0 ? "+" + data_user.hp : data_user.hp;
+            const formatted_regeneration = data_user.regeneration > 0 ? "+" + data_user.regeneration : data_user.regeneration;
+            const formatted_speed = data_user.speed > 0 ? "+" + data_user.speed : data_user.speed;
+            
+            const formatted_base_attack = data_user.base_attack > 0 ? "+" + data_user.base_attack : data_user.base_attack;
+            const formatted_base_defense = data_user.base_defense > 0 ? "+" + data_user.base_defense : data_user.base_defense;
+            const formatted_base_luck = data_user.base_luck > 0 ? "+" + data_user.base_luck : data_user.base_luck;
+            const formatted_base_hp = data_user.base_hp > 0 ? "+" + data_user.base_hp : data_user.base_hp;
+            const formatted_base_regeneration = data_user.base_regeneration > 0 ? "+" + data_user.base_regeneration : data_user.base_regeneration;
+            const formatted_base_speed = data_user.base_speed > 0 ? "+" + data_user.base_speed : data_user.base_speed;
+
+            const formatted_equipped_attack = equipped_attack > 0 ? "+" + equipped_attack : equipped_attack;
+            const formatted_equipped_defense = equipped_defense > 0 ? "+" + equipped_defense : equipped_defense;
+            const formatted_equipped_luck = equipped_luck > 0 ? "+" + equipped_luck : equipped_luck;
+            const formatted_equipped_hp = equipped_hp > 0 ? "+" + equipped_hp : equipped_hp;
+            const formatted_equipped_regeneration = equipped_regeneration > 0 ? "+" + equipped_regeneration : equipped_regeneration;
+            const formatted_equipped_speed = equipped_speed > 0 ? "+" + equipped_speed : equipped_speed;
+
+            const attack_emoji = application_emoji_cache.get("compass_item95") || "⚔️";
+            const defense_emoji = application_emoji_cache.get("item_119") || "🛡️";
+            const luck_emoji = application_emoji_cache.get("item_478") || "🍀";
+            const hp_emoji = application_emoji_cache.get("heart") || "❤️";
+            const regeneration_emoji = application_emoji_cache.get("item_622") || "❤️‍🩹";
+            const speed_emoji = application_emoji_cache.get("item_122") || "⚡";
+
+            embed.addFields(
+                {name: `> ${attack_emoji} __ATT__`, value: `> **${formatted_attack}** _(Base: ${formatted_base_attack}, Equipped: ${formatted_equipped_attack})_`, inline: true},
+                {name: `> ${defense_emoji} __DEF__`, value: `> **${formatted_defense}** _(Base: ${formatted_base_defense}, Equipped: ${formatted_equipped_defense})_`, inline: true},
+                {name: `> ${luck_emoji} __LCK__`, value: `> **${formatted_luck}** _(Base: ${formatted_base_luck}, Equipped: ${formatted_equipped_luck})_`, inline: true}
+            );
+
+            embed.addFields(
+                {name: `> ${hp_emoji} __MHP__`, value: `> **${formatted_hp}** _(Base: ${formatted_base_hp}, Equipped: ${formatted_equipped_hp})_`, inline: true},
+                {name: `> ${regeneration_emoji} __RGN__`, value: `> **${formatted_regeneration}** _(Base: ${formatted_base_regeneration}, Equipped: ${formatted_equipped_regeneration})_`, inline: true},
+                {name: `> ${speed_emoji} __SPD__`, value: `> **${formatted_speed}** _(Base: ${formatted_base_speed}, Equipped: ${formatted_equipped_speed})_`, inline: true}
+            );
+
+            /*
+            embed.addFields(
+                {name: "> 💯 __ADV Score__", value: `> ${"_Unknown?_"}`, inline: true},
+                {name: "> 💪 __ADV LVL__", value: `> ${"_Unknown?_"}`, inline: true},
+                {name: "> 🤠 __ADV Rank__", value: `> ${"_Unknown?_"}`, inline: true}
+            );
+
+            embed.addFields(
+                {name: "> 🔔 __Status__", value: `> ${"_Unknown?_"}`, inline: true},
+                {name: "> 🌐 __Server__", value: `> ${"_Unknown?_"}`, inline: true},
+                {name: "> 🔱 __REP__", value: `> ${"_Unknown?_"}`, inline: true}
+            );
+
+            embed.addFields(
+                {name: "> 🔇 __Is Muted__", value: `> ${"_Unknown?_"}`, inline: true},
+                {name: "> 🚫 __Is Banned__", value: `> ${"_Unknown?_"}`, inline: true},
+                {name: "> 👑 __Is King__", value: `> ${"_Unknown?_"}`, inline: true}
+            );
+            */
+
+            embed.setTimestamp();
+
+            return embed;
         }
 
-        const level = get_level(data.user.experience);
-        embed.setDescription(`${get_level_to_emojis(Math.min(level, 2000))}\n${restrict_text("_This user has no description..._", 250)}`);
-        embed.setColor(0x500000);
+        function get_buypoint_button_user(data_user){
+            const diamonds_emoji = "💎";
+            const max_skill_points = 20;
 
-        const id_emoji = application_emoji_cache.get("item_348") || "🏷️";
-        const coins_emoji = application_emoji_cache.get("coin") || "🪙";
-        const diamonds_emoji = "💎";
-        const level_emoji = application_emoji_cache.get("compass_item121") || "💪";
-        const experience_emoji = application_emoji_cache.get("fuego") || "🔥";
-        const role_emoji = application_emoji_cache.get("item_36") || "🎖";
+            const price_attack = 5 + 10 * data_user.base_attack;
+            const price_defense = 5 + 10 * data_user.base_defense;
+            const price_luck = 5 + 10 * data_user.base_luck;
+            const price_mhp = 5 + 10 * data_user.base_hp;
+            const price_regeneration = 5 + 10 * data_user.base_regeneration;
+            const price_speed = 5 + 10 * data_user.base_speed;
 
-        embed.addFields(
-            {name: `> ${id_emoji} __Identifier__`, value: `> ${data.user.id}`, inline: true},
-            {name: `> ${coins_emoji} __Coins__`, value: `> ${format_score_with_commas(data.user.coins)}`, inline: true},
-            {name: `> ${diamonds_emoji} __Diamonds__`, value: `> ***${format_score_with_commas(data.user.diamonds)}***`, inline: true}
-        );
+            const attack_button = new ButtonBuilder();
+            attack_button.setCustomId("attack");
+            attack_button.setEmoji(diamonds_emoji);
+            attack_button.setLabel(data_user.base_attack < max_skill_points ? `Buy 1 ATT point for ${price_attack}` : "ATT points is at MAX");
+            attack_button.setStyle(ButtonStyle.Primary);
+            attack_button.setDisabled(data_user.base_attack >= max_skill_points || price_attack > data_user.diamonds);
 
-        embed.addFields(
-            {name: `> ${level_emoji} __Level__`, value: `> ${format_score_with_commas(level)}`, inline: true},
-            {name: `> ${experience_emoji} __Experience__`, value: `> ${format_score_with_commas(data.user.experience)}`, inline: true},
-            {name: `> ${role_emoji} __Role__`, value: `> ${data.user.streamer ? `${streamer_emoji} Streamer` : "Player"}`, inline: true}
-        );
+            const defense_button = new ButtonBuilder();
+            defense_button.setCustomId("defense");
+            defense_button.setEmoji(diamonds_emoji);
+            defense_button.setLabel(data_user.base_defense < max_skill_points ? `Buy 1 DEF point for ${price_defense}` : "DEF points is at MAX");
+            defense_button.setStyle(ButtonStyle.Primary);
+            defense_button.setDisabled(data_user.base_defense >= max_skill_points || price_defense > data_user.diamonds);
 
-        const equipped_attack = data.user.attack - data.user.base_attack;
-        const equipped_defense = data.user.defense - data.user.base_defense;
-        const equipped_luck = data.user.luck - data.user.base_luck;
-        const equipped_hp = data.user.hp -  data.user.base_hp;
-        const equipped_regeneration = data.user.regeneration - data.user.base_regeneration;
-        const equipped_speed = data.user.speed - data.user.base_speed;
+            const luck_button = new ButtonBuilder();
+            luck_button.setCustomId("luck");
+            luck_button.setEmoji(diamonds_emoji);
+            luck_button.setLabel(data_user.base_luck < max_skill_points ? `Buy 1 LCK point for ${price_luck}` : "LCK points is at MAX");
+            luck_button.setStyle(ButtonStyle.Primary);
+            luck_button.setDisabled(data_user.base_luck >= max_skill_points || price_luck > data_user.diamonds);
 
-        const formatted_attack = data.user.attack > 0 ? "+" + data.user.attack : data.user.attack;
-        const formatted_defense = data.user.defense > 0 ? "+" + data.user.defense : data.user.defense;
-        const formatted_luck = data.user.luck > 0 ? "+" + data.user.luck : data.user.luck;
-        const formatted_hp = data.user.hp > 0 ? "+" + data.user.hp : data.user.hp;
-        const formatted_regeneration = data.user.regeneration > 0 ? "+" + data.user.regeneration : data.user.regeneration;
-        const formatted_speed = data.user.speed > 0 ? "+" + data.user.speed : data.user.speed;
-        
-        const formatted_base_attack = data.user.base_attack > 0 ? "+" + data.user.base_attack : data.user.base_attack;
-        const formatted_base_defense = data.user.base_defense > 0 ? "+" + data.user.base_defense : data.user.base_defense;
-        const formatted_base_luck = data.user.base_luck > 0 ? "+" + data.user.base_luck : data.user.base_luck;
-        const formatted_base_hp = data.user.base_hp > 0 ? "+" + data.user.base_hp : data.user.base_hp;
-        const formatted_base_regeneration = data.user.base_regeneration > 0 ? "+" + data.user.base_regeneration : data.user.base_regeneration;
-        const formatted_base_speed = data.user.base_speed > 0 ? "+" + data.user.base_speed : data.user.base_speed;
+            const mhp_button = new ButtonBuilder();
+            mhp_button.setCustomId("hp");
+            mhp_button.setEmoji(diamonds_emoji);
+            mhp_button.setLabel(data_user.base_hp < max_skill_points ? `Buy 1 MHP point for ${price_mhp}` : "RGN points is at MAX");
+            mhp_button.setStyle(ButtonStyle.Primary);
+            mhp_button.setDisabled(data_user.base_hp >= max_skill_points || price_mhp > data_user.diamonds);
 
-        const formatted_equipped_attack = equipped_attack > 0 ? "+" + equipped_attack : equipped_attack;
-        const formatted_equipped_defense = equipped_defense > 0 ? "+" + equipped_defense : equipped_defense;
-        const formatted_equipped_luck = equipped_luck > 0 ? "+" + equipped_luck : equipped_luck;
-        const formatted_equipped_hp = equipped_hp > 0 ? "+" + equipped_hp : equipped_hp;
-        const formatted_equipped_regeneration = equipped_regeneration > 0 ? "+" + equipped_regeneration : equipped_regeneration;
-        const formatted_equipped_speed = equipped_speed > 0 ? "+" + equipped_speed : equipped_speed;
+            const regeneration_button = new ButtonBuilder();
+            regeneration_button.setCustomId("regeneration");
+            regeneration_button.setEmoji(diamonds_emoji);
+            regeneration_button.setLabel(data_user.base_regeneration < max_skill_points ? `Buy 1 RGN point for ${price_regeneration}` : "RGN points is at MAX");
+            regeneration_button.setStyle(ButtonStyle.Primary);
+            regeneration_button.setDisabled(data_user.base_regeneration >= max_skill_points || price_regeneration > data_user.diamonds);
 
-        const attack_emoji = application_emoji_cache.get("compass_item95") || "⚔️";
-        const defense_emoji = application_emoji_cache.get("item_119") || "🛡️";
-        const luck_emoji = application_emoji_cache.get("item_478") || "🍀";
-        const hp_emoji = application_emoji_cache.get("heart") || "❤️";
-        const regeneration_emoji = application_emoji_cache.get("item_622") || "❤️‍🩹";
-        const speed_emoji = application_emoji_cache.get("item_122") || "⚡";
+            const speed_button = new ButtonBuilder();
+            speed_button.setCustomId("speed");
+            speed_button.setEmoji(diamonds_emoji);
+            speed_button.setLabel(data_user.base_speed < max_skill_points ? `Buy 1 SPD point for ${price_speed}` : "SPD points is at MAX");
+            speed_button.setStyle(ButtonStyle.Primary);
+            speed_button.setDisabled(data_user.base_speed >= max_skill_points || price_speed > data_user.diamonds);
 
-        embed.addFields(
-            {name: `> ${attack_emoji} __ATT__`, value: `> **${formatted_attack}** _(Base: ${formatted_base_attack}, Equipped: ${formatted_equipped_attack})_`, inline: true},
-            {name: `> ${defense_emoji} __DEF__`, value: `> **${formatted_defense}** _(Base: ${formatted_base_defense}, Equipped: ${formatted_equipped_defense})_`, inline: true},
-            {name: `> ${luck_emoji} __LCK__`, value: `> **${formatted_luck}** _(Base: ${formatted_base_luck}, Equipped: ${formatted_equipped_luck})_`, inline: true}
-        );
+            const row_1 = new ActionRowBuilder();
+            row_1.addComponents(attack_button, defense_button, luck_button);
 
-        embed.addFields(
-            {name: `> ${hp_emoji} __MHP__`, value: `> **${formatted_hp}** _(Base: ${formatted_base_hp}, Equipped: ${formatted_equipped_hp})_`, inline: true},
-            {name: `> ${regeneration_emoji} __RGN__`, value: `> **${formatted_regeneration}** _(Base: ${formatted_base_regeneration}, Equipped: ${formatted_equipped_regeneration})_`, inline: true},
-            {name: `> ${speed_emoji} __SPD__`, value: `> **${formatted_speed}** _(Base: ${formatted_base_speed}, Equipped: ${formatted_equipped_speed})_`, inline: true}
-        );
+            const row_2 = new ActionRowBuilder();
+            row_2.addComponents(mhp_button, regeneration_button, speed_button);
 
-        /*
-        embed.addFields(
-            {name: "> 💯 __ADV Score__", value: `> ${"_Unknown?_"}`, inline: true},
-            {name: "> 💪 __ADV LVL__", value: `> ${"_Unknown?_"}`, inline: true},
-            {name: "> 🤠 __ADV Rank__", value: `> ${"_Unknown?_"}`, inline: true}
-        );
+            return [row_1, row_2];
+        }
 
-        embed.addFields(
-            {name: "> 🔔 __Status__", value: `> ${"_Unknown?_"}`, inline: true},
-            {name: "> 🌐 __Server__", value: `> ${"_Unknown?_"}`, inline: true},
-            {name: "> 🔱 __REP__", value: `> ${"_Unknown?_"}`, inline: true}
-        );
+        const embed = get_embed_user(data.user);
 
-        embed.addFields(
-            {name: "> 🔇 __Is Muted__", value: `> ${"_Unknown?_"}`, inline: true},
-            {name: "> 🚫 __Is Banned__", value: `> ${"_Unknown?_"}`, inline: true},
-            {name: "> 👑 __Is King__", value: `> ${"_Unknown?_"}`, inline: true}
-        );
-        */
+        const gobattle_user_id_in_database = database.discord_user_to_gobattle_user_id(interaction.user);
+        const components_visible = data.user.id == gobattle_user_id_in_database || is_my_developer(client, interaction.user);
 
-        embed.setTimestamp();
-
-        await interaction.editReply({
-            embeds: [embed]
+        const response_interaction = await interaction.editReply({
+            embeds: [embed],
+            components: components_visible ? get_buypoint_button_user(data.user) : undefined
         });
+
+        function collector_filter(m){
+            const result = m.user.id == interaction.user.id || database.discord_user_to_gobattle_user_id(m.user) == gobattle_user_id_in_database || is_my_developer(m.user.client, m.user);
+        
+            if (!result){
+                m.reply({content: "You cannot interact with a command that you did not initiate yourself.", ephemeral: true}).catch((error) => {
+                    console.error(error);
+                });
+            }
+        
+            return result;
+        }
+
+        async function button_interaction_logic(response_interaction){
+            try{
+                const confirmation = await response_interaction.awaitMessageComponent({filter: collector_filter, componentType: ComponentType.Button, time: 60_000});
+                await confirmation.deferReply({ephemeral: true});
+
+                const platform = "Web";
+                const request_info = {
+                    method: "POST"
+                };
+                const response = await fetch(`https://gobattle.io/api.php/buypoint/${confirmation.customId}/${gobattle_token}?platform=${platform}&ud=`, request_info);
+                const data = await response.json();
+
+                if (!response.ok){
+                    switch (data?.error){
+                        case "Invalid token":
+                            database.remove_gobattle_access_by_gobattle_user_id(user_id);
+                            await confirmation.editReply(`User _#${user_id}_ session is unknown to me or has expired. The user must log in to their account with \`/user login\`.`);
+                            return;
+                        case "Invalid item or no enough money":
+                            await confirmation.editReply("Unable to pay skill point. Invalid item or no enough money!");
+                            return;
+                        case "Invalid category":
+                            await confirmation.editReply(`Unable to pay skill point. Invalid category!\nContact ${client.application.owner} to resolve this issue.`);
+                            return;
+                        default:
+                            await confirmation.editReply(`Unable to pay skill point. There is a problem with the Gobattle API.\nContact ${client.application.owner} to resolve this issue.`);
+                    }
+                    return;
+                }
+
+                await confirmation.editReply("The skill point has been paid.");
+
+                const embed = get_embed_user(data.user);
+                const rows = get_buypoint_button_user(data.user);
+                
+                response_interaction = await confirmation.update({embeds: [embed], components: rows});
+                await button_interaction_logic(response_interaction);
+            }catch (_error){
+                await interaction.editReply({content: "-# ⓘ This interaction has expired, please use the command again to be able to navigate the list.", components: []});
+            }
+        }
+    
+        if (components_visible){
+            await button_interaction_logic(response_interaction);
+        }
     }catch(error){
         await interaction.editReply(`Unable to retrieve information on this user.\nContact ${client.application.owner} to resolve this issue.`);
         console.error(error);
@@ -638,7 +768,7 @@ async function get_friend_pending_count(interaction, client){
     const data = await response.json();
 
     if (data?.error == "Invalid token"){
-        database.remove_gobattle_accesse_by_gobattle_user_id(user_id);
+        database.remove_gobattle_access_by_gobattle_user_id(user_id);
         await interaction.editReply(`User _#${user_id}_ session is unknown to me or has expired. The user must log in to their account with \`/user login\`.`);
         return;
     }
@@ -674,7 +804,7 @@ async function get_friend_pending_requests(interaction, client, type){
     const data = await response.json();
 
     if (data?.error == "Invalid token"){
-        database.remove_gobattle_accesse_by_gobattle_user_id(user_id);
+        database.remove_gobattle_access_by_gobattle_user_id(user_id);
         await interaction.editReply(`User _#${user_id}_ session is unknown to me or has expired. The user must log in to their account with \`/user login\`.`);
         return;
     }
@@ -735,7 +865,7 @@ async function get_friend_list(interaction, client){
     const data = await response.json();
 
     if (data?.error == "Invalid token"){
-        database.remove_gobattle_accesse_by_gobattle_user_id(user_id);
+        database.remove_gobattle_access_by_gobattle_user_id(user_id);
         await interaction.editReply(`User _#${user_id}_ session is unknown to me or has expired. The user must log in to their account with \`/user login\`.`);
         return;
     }
@@ -814,7 +944,7 @@ async function get_friend_add(interaction, client){
             const data = await response.json();
             switch (data?.error){
                 case "Invalid token":
-                    database.remove_gobattle_accesse_by_gobattle_user_id(my_gobattle_user_id);
+                    database.remove_gobattle_access_by_gobattle_user_id(my_gobattle_user_id);
                     await interaction.editReply("Your user session is unknown to me or has expired. You must log in to your account with `/user login`.");
                     return;
                 case "Account is already a friend":
@@ -870,7 +1000,7 @@ async function get_friend_delete(interaction, client){
         if (!response.ok){
             switch (data?.error){
                 case "Invalid token":
-                    database.remove_gobattle_accesse_by_discord_user(interaction.user);
+                    database.remove_gobattle_access_by_discord_user(interaction.user);
                     await interaction.editReply("Your user session is unknown to me or has expired. You must log in to your account with `/user login`.");
                     return;
                 default:
@@ -913,7 +1043,7 @@ async function get_friend_cancel(interaction, client){
         if (!response.ok){
             switch (data?.error){
                 case "Invalid token":
-                    database.remove_gobattle_accesse_by_discord_user(interaction.user);
+                    database.remove_gobattle_access_by_discord_user(interaction.user);
                     await interaction.editReply("Your user session is unknown to me or has expired. You must log in to your account with `/user login`.");
                     return;
                 default:
@@ -956,7 +1086,7 @@ async function get_friend_accept(interaction, client){
         if (!response.ok){
             switch (data?.error){
                 case "Invalid token":
-                    database.remove_gobattle_accesse_by_discord_user(interaction.user);
+                    database.remove_gobattle_access_by_discord_user(interaction.user);
                     await interaction.editReply("Your user session is unknown to me or has expired. You must log in to your account with `/user login`.");
                     return;
                 case "Error accepting request":
@@ -1002,7 +1132,7 @@ async function get_friend_ignore(interaction, client){
         if (!response.ok){
             switch (data?.error){
                 case "Invalid token":
-                    database.remove_gobattle_accesse_by_discord_user(interaction.user);
+                    database.remove_gobattle_access_by_discord_user(interaction.user);
                     await interaction.editReply("Your user session is unknown to me or has expired. You must log in to your account with `/user login`.");
                     return;
                 default:

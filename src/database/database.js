@@ -5,8 +5,8 @@ const fs = require("fs");
 
 const database = new sqlite.DatabaseSync("database.sqlite");
 
-let add_gobattle_accesse_statement;
-let remove_gobattle_accesse_statement;
+let add_gobattle_access_statement;
+let remove_gobattle_access_statement;
 let get_gobattle_token_by_gobattle_user_id_statement;
 let get_gobattle_token_by_discord_user_id_statement;
 let discord_user_id_to_gobattle_user_id_statement;
@@ -21,7 +21,7 @@ function init(){
 
         database.exec(data);
 
-        add_gobattle_accesse_statement = database.prepare(`
+        add_gobattle_access_statement = database.prepare(`
             INSERT INTO user_session (discord_user_id, gobattle_user_id, gobattle_token)
             VALUES ($discord_user_id, $gobattle_user_id, $gobattle_token)
             ON CONFLICT (discord_user_id)
@@ -36,7 +36,7 @@ function init(){
                 session_date = CURRENT_TIMESTAMP;
         `);
 
-        remove_gobattle_accesse_statement = database.prepare(`
+        remove_gobattle_access_statement = database.prepare(`
             DELETE FROM user_session WHERE gobattle_user_id = $gobattle_user_id;
         `);
 
@@ -59,13 +59,13 @@ function init(){
     });
 }
 
-function add_gobattle_accesse(discord_user, gobattle_user_id, gobattle_token){
+function add_gobattle_access(discord_user, gobattle_user_id, gobattle_token){
     const discord_user_prime = gobattle_user_id_to_discord_user_id(gobattle_user_id);
     if (discord_user_prime?.toString() == discord_user.id){
         return false;
     }
 
-    add_gobattle_accesse_statement.run({
+    add_gobattle_access_statement.run({
         $discord_user_id: BigInt(discord_user.id),
         $gobattle_user_id: gobattle_user_id,
         $gobattle_token: gobattle_token
@@ -74,26 +74,26 @@ function add_gobattle_accesse(discord_user, gobattle_user_id, gobattle_token){
     return true;
 }
 
-function remove_gobattle_accesse_by_discord_user(discord_user){
+function remove_gobattle_access_by_discord_user(discord_user){
     const gobattle_user_id = discord_user_to_gobattle_user_id(discord_user);
     if (!gobattle_user_id){
         return false;
     }
 
-    remove_gobattle_accesse_statement.run({
-        $discord_user_id: gobattle_user_id,
+    remove_gobattle_access_statement.run({
+        $gobattle_user_id: gobattle_user_id,
     });
 
     return true;
 }
 
-function remove_gobattle_accesse_by_gobattle_user_id(gobattle_user_id){
+function remove_gobattle_access_by_gobattle_user_id(gobattle_user_id){
     const discord_user_id = gobattle_user_id_to_discord_user_id(gobattle_user_id);
     if (!discord_user_id){
         return false;
     }
 
-    remove_gobattle_accesse_statement.run({
+    remove_gobattle_access_statement.run({
         $gobattle_user_id: gobattle_user_id,
     });
 
@@ -133,9 +133,9 @@ function gobattle_user_id_to_discord_user_id(gobattle_user_id){
 }
 
 exports.init = init;
-exports.add_gobattle_accesse = add_gobattle_accesse;
-exports.remove_gobattle_accesse_by_discord_user = remove_gobattle_accesse_by_discord_user;
-exports.remove_gobattle_accesse_by_gobattle_user_id = remove_gobattle_accesse_by_gobattle_user_id;
+exports.add_gobattle_access = add_gobattle_access;
+exports.remove_gobattle_access_by_discord_user = remove_gobattle_access_by_discord_user;
+exports.remove_gobattle_access_by_gobattle_user_id = remove_gobattle_access_by_gobattle_user_id;
 exports.get_gobattle_token_by_gobattle_id = get_gobattle_token_by_gobattle_user_id;
 exports.get_gobattle_token_by_discord_user = get_gobattle_token_by_discord_user;
 exports.discord_user_to_gobattle_user_id = discord_user_to_gobattle_user_id
