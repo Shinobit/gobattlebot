@@ -544,26 +544,6 @@ async function get_info(interaction, client){
                 {name: `> ${speed_emoji} __SPD__`, value: `> **${formatted_speed}** _(Base: ${formatted_base_speed}, Equipped: ${formatted_equipped_speed})_`, inline: true}
             );
 
-            /*
-            embed.addFields(
-                {name: "> 💯 __ADV Score__", value: `> ${"_Unknown?_"}`, inline: true},
-                {name: "> 💪 __ADV LVL__", value: `> ${"_Unknown?_"}`, inline: true},
-                {name: "> 🤠 __ADV Rank__", value: `> ${"_Unknown?_"}`, inline: true}
-            );
-
-            embed.addFields(
-                {name: "> 🔔 __Status__", value: `> ${"_Unknown?_"}`, inline: true},
-                {name: "> 🌐 __Server__", value: `> ${"_Unknown?_"}`, inline: true},
-                {name: "> 🔱 __REP__", value: `> ${"_Unknown?_"}`, inline: true}
-            );
-
-            embed.addFields(
-                {name: "> 🔇 __Is Muted__", value: `> ${"_Unknown?_"}`, inline: true},
-                {name: "> 🚫 __Is Banned__", value: `> ${"_Unknown?_"}`, inline: true},
-                {name: "> 👑 __Is King__", value: `> ${"_Unknown?_"}`, inline: true}
-            );
-            */
-
             embed.setTimestamp();
 
             return embed;
@@ -657,7 +637,7 @@ async function get_info(interaction, client){
             try{
                 const confirmation = await response_interaction.awaitMessageComponent({filter: collector_filter, componentType: ComponentType.Button, time: 60_000});
                 await confirmation.deferReply({ephemeral: true});
-
+                
                 const platform = "Web";
                 const request_info = {
                     method: "POST"
@@ -665,7 +645,7 @@ async function get_info(interaction, client){
                 const response = await fetch(`https://gobattle.io/api.php/buypoint/${confirmation.customId}/${gobattle_token}?platform=${platform}&ud=`, request_info);
                 const data = await response.json();
 
-                if (!response.ok){
+                if (response.ok){
                     switch (data?.error){
                         case "Invalid token":
                             database.remove_gobattle_access_by_gobattle_user_id(user_id);
@@ -684,13 +664,14 @@ async function get_info(interaction, client){
                 }
 
                 await confirmation.editReply("The skill point has been paid.");
-
+                
                 const embed = get_embed_user(data.user);
                 const rows = get_buypoint_button_user(data.user);
                 
-                response_interaction = await confirmation.update({embeds: [embed], components: rows});
+                await response_interaction.edit({embeds: [embed], components: rows});
                 await button_interaction_logic(response_interaction);
             }catch (_error){
+                console.error(_error);
                 await interaction.editReply({content: "-# ⓘ This interaction has expired, please use the command again to be able to navigate the list.", components: []});
             }
         }
