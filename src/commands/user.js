@@ -475,7 +475,8 @@ async function get_info(interaction, client){
             }
 
             const level = get_level(data_user.experience);
-            embed.setDescription(`${get_level_to_emojis(Math.min(level, 2000))}\n${restrict_text("_This user has no description..._", 250)}`);
+            const description = data_user.admin ? "This user is an **administrator**." : "_This user has no description..._";
+            embed.setDescription(`${get_level_to_emojis(Math.min(level, 2000))}\n${restrict_text(description, 250)}`);
             embed.setColor(0x500000);
 
             const id_emoji = application_emoji_cache.get("item_348") || "🏷️";
@@ -672,7 +673,7 @@ async function get_info(interaction, client){
                 await button_interaction_logic(response_interaction);
             }catch (_error){
                 console.error(_error);
-                await interaction.editReply({content: "-# ⓘ This interaction has expired, please use the command again to be able to navigate the list.", components: []});
+                await interaction.editReply({content: "-# ⓘ This interaction has expired, please use the command again to be able to pay skill points.", components: []});
             }
         }
     

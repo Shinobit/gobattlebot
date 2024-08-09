@@ -254,7 +254,7 @@ async function send_embed_layout(interaction, embed, pages, header_description =
             response_interaction = await confirmation.update({embeds: [embed], components: [row]});
             await button_interaction_logic(response_interaction);
         }catch (_error){
-            await interaction.editReply({content: "-# ⓘ This interaction has expired, please use the command again to be able to navigate the list.", components: []});
+            await interaction.editReply({content: "-# ⓘ This interaction has timed out, please use the command again to be able to navigate from page to page.", components: []});
         }
     }
 
