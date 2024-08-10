@@ -466,7 +466,7 @@ async function get_info(interaction, client){
 
             const unknown_head_emoji = application_emoji_cache.get("heads_item_0") || "👤";
             const streamer_emoji = application_emoji_cache.get("compass_item122") || "🔴";
-            const head_data = heads_map.get(data_user.skin_head);
+            const head_data = heads_map.get(data_user?.skin_head);
             const head_emoji = application_emoji_cache.get(head_data?.emoji) || unknown_head_emoji;
 
             embed.setTitle(`${head_emoji} ${data_user.streamer ? `${streamer_emoji} ` : ""}**${restrict_text(data_user.nick, 60)}**#${data_user.id}`);
@@ -666,8 +666,8 @@ async function get_info(interaction, client){
 
                 await confirmation.editReply("The skill point has been paid.");
                 
-                const embed = get_embed_user(data.user);
-                const rows = get_buypoint_button_user(data.user);
+                const embed = get_embed_user(data);
+                const rows = get_buypoint_button_user(data);
                 
                 await response_interaction.edit({embeds: [embed], components: rows});
                 await button_interaction_logic(response_interaction);
