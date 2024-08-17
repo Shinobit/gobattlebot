@@ -1,4 +1,4 @@
-const {Client, Events, Partials, IntentsBitField, Routes, ActivityType} = require("discord.js");
+const {Client, Events, Partials, IntentsBitField, Routes, ActivityType, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType} = require("discord.js");
 const {get_first_chat_channel, is_my_developer, update_application_emoji_cache, get_level_to_emojis, application_emoji_cache, get_info_application} = require("./utils.js");
 const database = require("./database/database.js");
 
@@ -287,7 +287,7 @@ client.on(Events.MessageCreate, async (msg) => {
     if (msg.author.bot){
         return;
     }
-
+      
     try{
         const command_info = msg.content.trim().split(" ");
         const command = command_info[0].toLowerCase();
@@ -354,6 +354,40 @@ client.on(Events.MessageCreate, async (msg) => {
 
                 const emoji = application_emoji_cache.get(command_info[1]) || "_Unknown?_";
                 await msg.reply(`The emoji is: ${emoji}`);
+
+                break;
+            case "!gb_confirm":
+                if (!is_my_developer(client, msg.author)){
+                    await msg.reply("You do not have permission to use this command.");
+                    return;
+                }
+                
+                const confirm_button = new ButtonBuilder();
+                confirm_button.setCustomId("confirm");
+                confirm_button.setLabel("Confirm");
+                confirm_button.setStyle(ButtonStyle.Success);
+
+                const cancel_button = new ButtonBuilder();
+                cancel_button.setCustomId("cancel");
+                cancel_button.setLabel("Cancel");
+                cancel_button.setStyle(ButtonStyle.Danger);
+
+                const row = new ActionRowBuilder();
+                row.addComponents(confirm_button, cancel_button);
+
+                const response_interaction = await msg.reply({
+                    content: "Hello dad, here is a confirmation message:",
+                    components: [row]
+                });
+
+                const confirmation = await response_interaction.awaitMessageComponent({filter: () => {return true}, componentType: ComponentType.Button, time: 60_000});
+                
+                if (confirmation.customId == "confirm"){
+                    await confirmation.update({content: "Confirm.", components: []});
+                    return;
+                }
+
+                await confirmation.update({content: "Cancel.", components: []});
 
                 break;
         }

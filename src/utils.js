@@ -203,6 +203,12 @@ async function send_embed_layout(interaction, embed, pages, header_description =
 
     embed.setFooter({text: `Page ${current_page}/${nb_pages}`});
 
+    const first_button = new ButtonBuilder();
+    first_button.setCustomId("first");
+    first_button.setEmoji("⏪");
+    first_button.setStyle(ButtonStyle.Primary);
+    first_button.setDisabled(current_page == 1);
+
     const previous_button = new ButtonBuilder();
     previous_button.setCustomId("previous");
     previous_button.setEmoji("◀️");
@@ -215,8 +221,14 @@ async function send_embed_layout(interaction, embed, pages, header_description =
     next_button.setStyle(ButtonStyle.Primary);
     next_button.setDisabled(current_page == nb_pages);
 
+    const last_button = new ButtonBuilder();
+    last_button.setCustomId("last");
+    last_button.setEmoji("⏩");
+    last_button.setStyle(ButtonStyle.Primary);
+    last_button.setDisabled(current_page == nb_pages);
+
     const row = new ActionRowBuilder();
-    row.addComponents(previous_button, next_button);
+    row.addComponents(first_button, previous_button, next_button, last_button);
 
     const response_interaction = await interaction.editReply({
         content: content_message,
@@ -240,16 +252,27 @@ async function send_embed_layout(interaction, embed, pages, header_description =
         try{
             const confirmation = await response_interaction.awaitMessageComponent({filter: collector_filter, componentType: ComponentType.Button, time: 60_000});
 
-            if (confirmation.customId === "previous"){
-                current_page--;
-            } else if (confirmation.customId === "next"){
-                current_page++;
+            switch (confirmation.customId){
+                case "first":
+                    current_page = 1;
+                    break;
+                case "previous":
+                    current_page--;
+                    break;
+                case "next":
+                    current_page++;
+                    break;
+                case "last":
+                    current_page = nb_pages;
+                    break;
             }
 
             embed.setDescription(header_description + pages[current_page - 1]);
             embed.setFooter({text: `Page ${current_page}/${nb_pages}`});
+            first_button.setDisabled(current_page == 1);
             previous_button.setDisabled(current_page == 1);
             next_button.setDisabled(current_page == nb_pages);
+            last_button.setDisabled(current_page == nb_pages);
 
             response_interaction = await confirmation.update({embeds: [embed], components: [row]});
             await button_interaction_logic(response_interaction);

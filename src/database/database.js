@@ -105,7 +105,7 @@ function get_gobattle_token_by_gobattle_user_id(gobattle_user_id){
         $gobattle_user_id: gobattle_user_id
     });
 
-    return data.gobattle_token;
+    return data?.gobattle_token;
 }
 
 function get_gobattle_token_by_discord_user(discord_user){
@@ -113,7 +113,7 @@ function get_gobattle_token_by_discord_user(discord_user){
         $discord_user_id: discord_user.id
     });
 
-    return data.gobattle_token;
+    return data?.gobattle_token;
 }
 
 function discord_user_to_gobattle_user_id(discord_user){
@@ -121,7 +121,7 @@ function discord_user_to_gobattle_user_id(discord_user){
         $discord_user_id: BigInt(discord_user.id)
     });
 
-    return data.gobattle_user_id;
+    return data?.gobattle_user_id;
 }
 
 function gobattle_user_id_to_discord_user_id(gobattle_user_id){
@@ -129,7 +129,7 @@ function gobattle_user_id_to_discord_user_id(gobattle_user_id){
         $gobattle_user_id: gobattle_user_id
     });
 
-    return data.discord_user_id;
+    return data?.discord_user_id;
 }
 
 exports.init = init;

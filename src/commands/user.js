@@ -448,7 +448,7 @@ async function get_info(interaction, client){
         const server_version = 115;
         const platform = "Web";
         const response = await fetch(`https://gobattle.io/api.php/bootstrap/${server_version}/${gobattle_token}?platform=${platform}&ud=`);
-        const data = await response.json();
+        let data = await response.json();
 
         if (!response.ok){
             if (data?.error == "Invalid token"){
@@ -550,58 +550,64 @@ async function get_info(interaction, client){
             return embed;
         }
 
+        function get_price_skills(data_user){
+            return {
+                attack: 5 + 10 * data_user.base_attack,
+                defense: 5 + 10 * data_user.base_defense,
+                luck: 5 + 10 * data_user.base_luck,
+                hp: 5 + 10 * data_user.base_hp,
+                regeneration: 5 + 10 * data_user.base_regeneration,
+                speed: 5 + 10 * data_user.base_speed
+            };
+        }
+
         function get_buypoint_button_user(data_user){
             const diamonds_emoji = "💎";
             const max_skill_points = 20;
 
-            const price_attack = 5 + 10 * data_user.base_attack;
-            const price_defense = 5 + 10 * data_user.base_defense;
-            const price_luck = 5 + 10 * data_user.base_luck;
-            const price_mhp = 5 + 10 * data_user.base_hp;
-            const price_regeneration = 5 + 10 * data_user.base_regeneration;
-            const price_speed = 5 + 10 * data_user.base_speed;
+            const price_skills = get_price_skills(data_user);
 
             const attack_button = new ButtonBuilder();
             attack_button.setCustomId("attack");
             attack_button.setEmoji(diamonds_emoji);
-            attack_button.setLabel(data_user.base_attack < max_skill_points ? `Buy 1 ATT point for ${price_attack}` : "ATT points is at MAX");
+            attack_button.setLabel(data_user.base_attack < max_skill_points ? `Buy 1 ATT point for ${price_skills.attack}` : "ATT points is at MAX");
             attack_button.setStyle(ButtonStyle.Primary);
-            attack_button.setDisabled(data_user.base_attack >= max_skill_points || price_attack > data_user.diamonds);
+            attack_button.setDisabled(data_user.base_attack >= max_skill_points || price_skills.attack > data_user.diamonds);
 
             const defense_button = new ButtonBuilder();
             defense_button.setCustomId("defense");
             defense_button.setEmoji(diamonds_emoji);
-            defense_button.setLabel(data_user.base_defense < max_skill_points ? `Buy 1 DEF point for ${price_defense}` : "DEF points is at MAX");
+            defense_button.setLabel(data_user.base_defense < max_skill_points ? `Buy 1 DEF point for ${price_skills.defense}` : "DEF points is at MAX");
             defense_button.setStyle(ButtonStyle.Primary);
-            defense_button.setDisabled(data_user.base_defense >= max_skill_points || price_defense > data_user.diamonds);
+            defense_button.setDisabled(data_user.base_defense >= max_skill_points || price_skills.defense > data_user.diamonds);
 
             const luck_button = new ButtonBuilder();
             luck_button.setCustomId("luck");
             luck_button.setEmoji(diamonds_emoji);
-            luck_button.setLabel(data_user.base_luck < max_skill_points ? `Buy 1 LCK point for ${price_luck}` : "LCK points is at MAX");
+            luck_button.setLabel(data_user.base_luck < max_skill_points ? `Buy 1 LCK point for ${price_skills.luck}` : "LCK points is at MAX");
             luck_button.setStyle(ButtonStyle.Primary);
-            luck_button.setDisabled(data_user.base_luck >= max_skill_points || price_luck > data_user.diamonds);
+            luck_button.setDisabled(data_user.base_luck >= max_skill_points || price_skills.luck > data_user.diamonds);
 
             const mhp_button = new ButtonBuilder();
             mhp_button.setCustomId("hp");
             mhp_button.setEmoji(diamonds_emoji);
-            mhp_button.setLabel(data_user.base_hp < max_skill_points ? `Buy 1 MHP point for ${price_mhp}` : "RGN points is at MAX");
+            mhp_button.setLabel(data_user.base_hp < max_skill_points ? `Buy 1 MHP point for ${price_skills.hp}` : "RGN points is at MAX");
             mhp_button.setStyle(ButtonStyle.Primary);
-            mhp_button.setDisabled(data_user.base_hp >= max_skill_points || price_mhp > data_user.diamonds);
+            mhp_button.setDisabled(data_user.base_hp >= max_skill_points || price_skills.hp > data_user.diamonds);
 
             const regeneration_button = new ButtonBuilder();
             regeneration_button.setCustomId("regeneration");
             regeneration_button.setEmoji(diamonds_emoji);
-            regeneration_button.setLabel(data_user.base_regeneration < max_skill_points ? `Buy 1 RGN point for ${price_regeneration}` : "RGN points is at MAX");
+            regeneration_button.setLabel(data_user.base_regeneration < max_skill_points ? `Buy 1 RGN point for ${price_skills.regeneration}` : "RGN points is at MAX");
             regeneration_button.setStyle(ButtonStyle.Primary);
-            regeneration_button.setDisabled(data_user.base_regeneration >= max_skill_points || price_regeneration > data_user.diamonds);
+            regeneration_button.setDisabled(data_user.base_regeneration >= max_skill_points || price_skills.regeneration > data_user.diamonds);
 
             const speed_button = new ButtonBuilder();
             speed_button.setCustomId("speed");
             speed_button.setEmoji(diamonds_emoji);
-            speed_button.setLabel(data_user.base_speed < max_skill_points ? `Buy 1 SPD point for ${price_speed}` : "SPD points is at MAX");
+            speed_button.setLabel(data_user.base_speed < max_skill_points ? `Buy 1 SPD point for ${price_skills.speed}` : "SPD points is at MAX");
             speed_button.setStyle(ButtonStyle.Primary);
-            speed_button.setDisabled(data_user.base_speed >= max_skill_points || price_speed > data_user.diamonds);
+            speed_button.setDisabled(data_user.base_speed >= max_skill_points || price_skills.speed > data_user.diamonds);
 
             const row_1 = new ActionRowBuilder();
             row_1.addComponents(attack_button, defense_button, luck_button);
@@ -635,45 +641,49 @@ async function get_info(interaction, client){
         }
 
         async function button_interaction_logic(response_interaction){
-            try{
-                const confirmation = await response_interaction.awaitMessageComponent({filter: collector_filter, componentType: ComponentType.Button, time: 60_000});
-                await confirmation.deferReply({ephemeral: true});
-                
-                const platform = "Web";
-                const request_info = {
-                    method: "POST"
-                };
-                const response = await fetch(`https://gobattle.io/api.php/buypoint/${confirmation.customId}/${gobattle_token}?platform=${platform}&ud=`, request_info);
-                const data = await response.json();
+            let confirmation_message;
 
-                if (!response.ok){
-                    switch (data?.error){
-                        case "Invalid token":
-                            database.remove_gobattle_access_by_gobattle_user_id(user_id);
-                            await confirmation.editReply(`User _#${user_id}_ session is unknown to me or has expired. The user must log in to their account with \`/user login\`.`);
-                            return;
-                        case "Invalid item or no enough money":
-                            await confirmation.editReply("Unable to pay skill point. Invalid item or no enough money!");
-                            return;
-                        case "Invalid category":
-                            await confirmation.editReply(`Unable to pay skill point. Invalid category!\nContact ${client.application.owner} to resolve this issue.`);
-                            return;
-                        default:
-                            await confirmation.editReply(`Unable to pay skill point. There is a problem with the Gobattle API.\nContact ${client.application.owner} to resolve this issue.`);
-                    }
-                    return;
+            try{
+                const skill_interaction = await response_interaction.awaitMessageComponent({filter: collector_filter, componentType: ComponentType.Button, time: 60_000});
+                
+                const confirm_button = new ButtonBuilder();
+                confirm_button.setCustomId("confirm");
+                confirm_button.setLabel("Confirm");
+                confirm_button.setStyle(ButtonStyle.Success);
+
+                const cancel_button = new ButtonBuilder();
+                cancel_button.setCustomId("cancel");
+                cancel_button.setLabel("Cancel");
+                cancel_button.setStyle(ButtonStyle.Danger);
+
+                const row = new ActionRowBuilder();
+                row.addComponents(confirm_button, cancel_button);
+
+                await skill_interaction.deferReply();
+                confirmation_message = await skill_interaction.followUp({
+                    content: `Do you want to buy 1 **${skill_interaction.customId.toLocaleUpperCase()}** point for **${get_price_skills(data.user)[skill_interaction.customId]}** diamonds?`,
+                    components: [row]
+                });
+            
+                await response_interaction.edit({components: []});
+                
+                const new_data_user = await get_purchase_confirmation_skill(confirmation_message, client, skill_interaction.user.id, user_id, gobattle_token, skill_interaction.customId);
+                
+                if (new_data_user){
+                    data.user = new_data_user;
                 }
 
-                await confirmation.editReply("The skill point has been paid.");
-                
-                const embed = get_embed_user(data);
-                const rows = get_buypoint_button_user(data);
-                
+                const embed = get_embed_user(data.user);
+                const rows = get_buypoint_button_user(data.user);
+            
                 await response_interaction.edit({embeds: [embed], components: rows});
                 await button_interaction_logic(response_interaction);
             }catch (_error){
-                console.error(_error);
                 await interaction.editReply({content: "-# ⓘ This interaction has expired, please use the command again to be able to pay skill points.", components: []});
+                
+                if (confirmation_message){
+                    await confirmation_message.edit({content: "Payment for skill point has been canceled.", components: []});
+                }
             }
         }
     
@@ -683,6 +693,59 @@ async function get_info(interaction, client){
     }catch(error){
         await interaction.editReply(`Unable to retrieve information on this user.\nContact ${client.application.owner} to resolve this issue.`);
         console.error(error);
+    }
+}
+
+async function get_purchase_confirmation_skill(confirmation_message, client, discord_user_id, gobattle_user_id, gobattle_token, skill_type){
+    function collector_filter(m){
+        const result = m.user.id == discord_user_id || is_my_developer(m.user.client, m.user);
+    
+        if (!result){
+            m.reply({content: "You cannot interact with a command that you did not initiate yourself.", ephemeral: true}).catch((error) => {
+                console.error(error);
+            });
+        }
+    
+        return result;
+    }
+
+    try{
+        const confirmation = await confirmation_message.awaitMessageComponent({filter: collector_filter, componentType: ComponentType.Button, time: 60_000});
+        if (confirmation.customId == "cancel"){
+            await confirmation.update({content: "Payment for skill point has been canceled.", components: []});
+            return;
+        }
+        
+        const platform = "Web";
+        const request_info = {
+            method: "POST"
+        };
+        const response = await fetch(`https://gobattle.io/api.php/buypoint/${skill_type}/${gobattle_token}?platform=${platform}&ud=`, request_info);
+        const data = await response.json();
+
+        if (!response.ok){
+            switch (data?.error){
+                case "Invalid token":
+                    database.remove_gobattle_access_by_gobattle_user_id(gobattle_user_id);
+                    await confirmation.update({content: `User _#${gobattle_user_id}_ session is unknown to me or has expired. The user must log in to their account with \`/user login\`.`, components: []});
+                    return;
+                case "Invalid item or no enough money":
+                    await confirmation.update({content: "Unable to pay skill point. Invalid item or no enough money!", components: []});
+                    return;
+                case "Invalid category":
+                    await confirmation.update({content: `Unable to pay skill point. Invalid category!\nContact ${client.application.owner} to resolve this issue.`, components: []});
+                    return;
+                default:
+                    await confirmation.update({content: `Unable to pay skill point. There is a problem with the Gobattle API.\nContact ${client.application.owner} to resolve this issue.`, components: []});
+            }
+            return;
+        }
+
+        await confirmation.update({content: "The skill point has been paid.", components: []});
+        
+        return data;
+    }catch(error){
+        await confirmation_message.editReply({content: "Payment for skill point has been canceled.", components: []});
     }
 }
 
