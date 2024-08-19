@@ -662,7 +662,8 @@ async function get_info(interaction, client){
                 await skill_interaction.deferReply();
                 confirmation_message = await skill_interaction.followUp({
                     content: `Do you want to buy 1 **${skill_interaction.customId.toLocaleUpperCase()}** point for **${get_price_skills(data.user)[skill_interaction.customId]}** diamonds?`,
-                    components: [row]
+                    components: [row],
+                    ephemeral: true
                 });
             
                 await response_interaction.edit({components: []});

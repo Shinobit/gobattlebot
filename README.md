@@ -12,6 +12,13 @@ The door is open to all potential contributors. The project is now managed by Sh
 
 ## To start the project, open a terminal at the root of the project and use the following commands:
 (Make sure you have set the environment variables correctly in the `.env` file.)
+The .env file must be created manually at the root of the project and should look like this:
+
+```env
+TOKEN = "token_discord_app"
+# The GUILD_ADMIN_ID variable gives certain administrator privileges to the specified guilds.
+GUILD_ADMIN_ID = ["380588354934276097"]
+```
 
 Assume you are on a Linux environment:
 

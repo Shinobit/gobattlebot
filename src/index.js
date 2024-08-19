@@ -287,7 +287,7 @@ client.on(Events.MessageCreate, async (msg) => {
     if (msg.author.bot){
         return;
     }
-      
+
     try{
         const command_info = msg.content.trim().split(" ");
         const command = command_info[0].toLowerCase();

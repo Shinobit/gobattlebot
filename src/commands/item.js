@@ -74,7 +74,7 @@ async function get_info(interaction, client){
         const item_emoji = application_emoji_cache.get(item_info?.emoji) || unknown_item_emoji;
 
         const embed = new EmbedBuilder();
-        embed.setTitle(`${item_emoji} ${restrict_text(item_info.name, 60)}`);
+        embed.setTitle(`${item_emoji} ${restrict_text(item_info.name, 60)}#${item_id}`);
         if (typeof item_emoji != "string"){
             embed.setThumbnail(item_emoji.imageURL());
         }
