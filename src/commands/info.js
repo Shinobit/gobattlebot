@@ -1,5 +1,5 @@
 const {SlashCommandBuilder, EmbedBuilder} = require("discord.js");
-const {get_info_application, format_score, format_score} = require("./../utils.js");
+const {get_info_application, format_score} = require("./../utils.js");
 
 const info_command = new SlashCommandBuilder();
 info_command.setName("info");
