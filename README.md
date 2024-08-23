@@ -12,7 +12,7 @@ The door is open to all potential contributors. The project is now managed by Sh
 
 ## To start the project, open a terminal at the root of the project and use the following commands:
 (Make sure you have set the environment variables correctly in the `.env` file.)
-The .env file must be created manually at the root of the project and should look like this:
+The `.env` file must be created manually at the root of the project and should look like this:
 
 ```env
 TOKEN = "token_discord_app"

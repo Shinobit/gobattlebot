@@ -128,6 +128,29 @@ user_command.addSubcommand((subcommand) => {
 
     return subcommand;
 });
+user_command.addSubcommand((subcommand) => {
+    subcommand.setName("change_nickname");
+	subcommand.setDescription("Change a GoBattle.io user's nickname.");
+    subcommand.addIntegerOption((option) => {
+        option.setName("user_id");
+        option.setDescription("The user identifier.");
+        option.setMinValue(1);
+        option.setRequired(true);
+
+        return option;
+    });
+    subcommand.addStringOption((option) => {
+        option.setName("nick");
+        option.setDescription("New nickname.");
+        option.setMaxLength(1);
+        option.setMaxLength(20);
+        option.setRequired(true);
+
+        return option;
+    });
+
+    return subcommand;
+});
 user_command.addSubcommandGroup((friend_command) => {
     friend_command.setName("friend");
 	friend_command.setDescription("Command relating to friends in the game.");
@@ -297,6 +320,9 @@ async function get_user(interaction, client){
             case "discord_to_gobattle":
                 await get_discord_to_gobattle(interaction, client);
                 break;
+            case "change_nickname":
+                await get_change_nickname(interaction, client);
+                break;
             default:
                 await interaction.reply(`Invalid subcommand.\nContact ${client.application.owner} to resolve this issue.`);
         }
@@ -356,7 +382,8 @@ async function get_create(interaction, _client){
 
     const password_input = new TextInputBuilder();
     password_input.setCustomId("password");
-    password_input.setLabel("Password (Don't give Discord password!)");
+    password_input.setLabel("Password");
+    password_input.setPlaceholder("Don't give Discord password!");
     password_input.setStyle(TextInputStyle.Short);
     email_input.setRequired(true);
 
@@ -381,15 +408,17 @@ async function get_login(interaction, _client){
 
     const email_input = new TextInputBuilder();
     email_input.setCustomId("email");
-    email_input.setLabel("Email (Used on GoBattle.io)");
+    email_input.setLabel("Email");
+    email_input.setPlaceholder("Email used on GoBattle.io")
     email_input.setStyle(TextInputStyle.Short);
     email_input.setRequired(true);
 
     const password_input = new TextInputBuilder();
     password_input.setCustomId("password");
-    password_input.setLabel("Password (Don't give Discord password!)");
+    password_input.setLabel("Password");
+    password_input.setPlaceholder("Don't give Discord password!");
     password_input.setStyle(TextInputStyle.Short);
-    email_input.setRequired(true);
+    password_input.setRequired(true);
 
     const email_action_row = new ActionRowBuilder().addComponents(email_input);
 	const password_action_row = new ActionRowBuilder().addComponents(password_input);
@@ -795,6 +824,58 @@ async function get_discord_to_gobattle(interaction, _client){
     }
     
     await interaction.editReply(`The Discord account ${discord_user} belongs to the GoBattle account _#${gobattle_user_id}_.`);
+}
+
+async function get_change_nickname(interaction, client){
+    await interaction.deferReply({ephemeral: true});
+
+    const user_id = interaction.options.get("user_id")?.value;
+    const nick = interaction.options.get("nick")?.value;
+
+    const can_change = database.discord_user_to_gobattle_user_id(interaction.user) == user_id || is_my_developer(client, interaction.user);
+    if (!can_change){
+        await interaction.editReply("You cannot change the nickname of a GoBattle account that does not belong to you.");
+        return;
+    }
+
+    const gobattle_token = database.get_gobattle_token_by_gobattle_id(user_id);
+    if (!gobattle_token){
+        await interaction.editReply(`User _#${user_id}_ session is unknown to me or has expired. The user must log in to their account with \`/user login\`.`);
+        return;
+    }
+
+    const platform = "Web";
+    const request_info = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+            "nick": nick
+        })
+    };
+    const response = await fetch(`https://gobattle.io/api.php/nick/${gobattle_token}?platform=${platform}&ud=`, request_info);
+    const data = await response.json();
+
+    if (!response.ok){
+        switch (data?.error){
+            case "Invalid token":
+                database.remove_gobattle_access_by_gobattle_user_id(user_id);
+                await interaction.editReply(`User _#${user_id}_ session is unknown to me or has expired. The user must log in to their account with \`/user login\`.`);
+                return;
+            case "Nick already in use":
+                await interaction.editReply(`The nickname **${nick}** is already in use.`);
+                return;
+            case "Invalid nick":
+                await interaction.editReply(`The \`${nick}\` nickname is invalid, please use a valid nickname.`);
+                return;
+            default:
+                await interaction.editReply(`Unable to change nickname. There is a problem with the Gobattle API.\nContact ${client.application.owner} to resolve this issue.`);
+        }
+        return;
+    }
+
+    await interaction.editReply(`The nickname has been changed to **${data?.nick}**.`);
 }
 
 async function get_friend_pending_count(interaction, client){

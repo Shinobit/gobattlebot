@@ -92,7 +92,7 @@ function get_utc_date(){
     return new Date(today.getTime() + (today.getTimezoneOffset() * 60000));
 }
 
-function get_utf_time_next_king(){
+function get_utc_time_next_king(){
     const utc = get_utc_date();
 
     const current_day = utc.getDay();
@@ -292,7 +292,7 @@ exports.get_level = get_level;
 exports.get_level_adventurer = get_level_adventurer;
 exports.get_level_to_emojis = get_level_to_emojis;
 exports.get_utc_date = get_utc_date;
-exports.get_utf_time_next_king = get_utf_time_next_king;
+exports.get_utc_time_next_king = get_utc_time_next_king;
 exports.sum = sum;
 exports.send_echo = send_echo;
 exports.get_first_chat_channel = get_first_chat_channel;
