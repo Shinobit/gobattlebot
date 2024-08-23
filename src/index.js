@@ -16,6 +16,7 @@ const {get_leave, leave_command} = require("./commands/leave.js");
 const {get_setting, setting_command} = require("./commands/setting.js");
 const {get_echo, echo_command} = require("./commands/echo.js");
 const {get_ultrarare_drop_chance, ultrarare_drop_chance_command} = require("./commands/ultrarare_drop_chance.js");
+const {get_install_link, install_link_command} = require("./commands/install_link.js");
 
 const global_commands = [
     ranking_command,
@@ -29,7 +30,8 @@ const global_commands = [
     date_new_king_command,
     ping_command,
     leave_command,
-    ultrarare_drop_chance_command
+    ultrarare_drop_chance_command,
+    install_link_command
 ];
 
 const private_commands = [
@@ -140,6 +142,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
                     break;
                 case "get_ultrarare_drop_chance":
                     await get_ultrarare_drop_chance(interaction, client);
+                    break;
+                case "install_link":
+                    await get_install_link(interaction, client);
                     break;
                 default:
                     await interaction.reply({content: "This command no longer exists.", ephemeral: true});
